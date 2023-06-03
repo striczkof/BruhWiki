@@ -1,0 +1,123 @@
+/* Main container in all pages, has to be centred relative to the browser display, and have a solid border and shadow */
+div.main {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 0 10px #ddd;
+    margin: 0 auto;
+    padding: 20px;
+    width: 80%;
+    overflow: hidden;
+}
+
+/* Small container, usually centred */
+div.main--small {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 0 10px #ddd;
+    margin: 0 auto;
+    padding: 20px;
+    width: 25%;
+    min-width: 120px;
+    overflow: hidden;
+    text-align: center;
+}
+
+/* Login/register form */
+form.login-register-form {
+    text-align: center;
+
+}
+
+ul.login-register-form-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+ul.login-register-form-list li {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 0;
+}
+
+ul.login-register-form-list li h2 {
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+}
+
+ul.login-register-form-list li p {
+    margin: 0;
+    padding: 0;
+}
+
+ul.login-register-form-list li.form-list-label {
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+ul.login-register-form-list li.form-list-input {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+form.login-register-form input {
+    margin: 5px;
+    width: 90%;
+}
+
+/* Login/Register result box, thicc border */
+div.result-box {
+    border-width: 10px;
+    border-style: solid;
+    border-radius: 20px;
+    margin: 0 auto;
+    padding: 10px;
+    width: 80%;
+    text-align: center;
+}
+
+/* Result box text, just to keep it black */
+div.result-box p {
+    font-weight: bold;
+    margin: 0;
+    color: #000000;
+}
+
+/* Success (green) result box */
+div.result-box.result-box--success {
+    border-color: #008100;
+    background-color: #00ff00;
+}
+
+div.result-box.result-box--failure {
+    border-color: #810000;
+    background-color: #ff0400;
+}
+
+
+/* Style for the title container in the main box. It needs a border at the bottom and a margin at the bottom to separate it from the content */
+div.title {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+
+/*  Title text. Centre it, make it blue, and give it reflections below */
+div.title h1 {
+    color: #00f;
+    font-size: 1.5em;
+    text-align: center;
+    text-shadow: 0 0 5px #ddd;
+}
+
+/* Sidebar container. This should take 10% of the width of the main container, and be floated to the left */
+div.sidebar {
+    float: left;
+    width: 10%;
+}
+
+/* Content container. This should take 90% of the width of the main container, and be floated to the right */
+div.content {
+    float: right;
+    width: 90%;
+}
