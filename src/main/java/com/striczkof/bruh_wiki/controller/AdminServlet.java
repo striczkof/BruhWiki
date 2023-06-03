@@ -1,7 +1,7 @@
-package striczkof.bruh_wiki.controller;
+package com.striczkof.bruh_wiki.controller;
 
-import striczkof.bruh_wiki.model.Database;
-import striczkof.bruh_wiki.model.User;
+import com.striczkof.bruh_wiki.model.Database;
+import com.striczkof.bruh_wiki.model.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -191,7 +191,7 @@ public class AdminServlet extends HttpServlet {
                 // Referer exists, check if from admin.jsp
                 if (referer.contains("admin.jsp")) {
                     // Referer is from admin.jsp, so we can do some stuff
-
+                    return;
                 } else {
                     // Might be able to do some stuff outside admin.jsp later, but for now, yeet the guy into the admin
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

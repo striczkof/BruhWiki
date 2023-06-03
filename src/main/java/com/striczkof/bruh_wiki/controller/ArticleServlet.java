@@ -1,7 +1,7 @@
-package striczkof.bruh_wiki.controller;
+package com.striczkof.bruh_wiki.controller;
 
-import striczkof.bruh_wiki.model.Article;
-import striczkof.bruh_wiki.model.Database;
+import com.striczkof.bruh_wiki.model.Article;
+import com.striczkof.bruh_wiki.model.Database;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

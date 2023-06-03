@@ -1,4 +1,4 @@
-package striczkof.bruh_wiki.model;
+package com.striczkof.bruh_wiki.model;
 
 import java.io.Serializable;
 

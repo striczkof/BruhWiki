@@ -1,4 +1,4 @@
-package striczkof.bruh_wiki.model;
+package com.striczkof.bruh_wiki.model;
 
 import jakarta.servlet.ServletContext;
 
@@ -49,7 +49,7 @@ public class Database implements Serializable {
                     setPreparedStatements(null);
                 }
                 this.connection.close();
-                DriverManager.deregisterDriver(DriverManager.getDriver(driver));
+                // DriverManager.deregisterDriver(DriverManager.getDriver(driver));
             } catch (SQLException e) {
                 e.printStackTrace();
             }

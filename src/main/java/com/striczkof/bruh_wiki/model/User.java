@@ -1,4 +1,4 @@
-package striczkof.bruh_wiki.model;
+package com.striczkof.bruh_wiki.model;
 
 import java.io.Serializable;
 
@@ -35,7 +35,11 @@ public class User implements Serializable {
         this.id = id;
         this.username = username;
         this.passwordSalt = passwordSalt;
-        this.name = name;
+        if (name == null || name.isEmpty()) {
+            this.name = username;
+        } else {
+            this.name = name;
+        }
         this.admin = admin;
         this.created = created;
         this.lastLogin = lastLogin;

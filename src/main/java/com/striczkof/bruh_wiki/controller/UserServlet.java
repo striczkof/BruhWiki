@@ -1,7 +1,7 @@
-package striczkof.bruh_wiki.controller;
+package com.striczkof.bruh_wiki.controller;
 
-import striczkof.bruh_wiki.model.Database;
-import striczkof.bruh_wiki.model.User;
+import com.striczkof.bruh_wiki.model.Database;
+import com.striczkof.bruh_wiki.model.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -374,6 +374,34 @@ public class UserServlet extends HttpServlet {
     }
 
     /**
+     * Gets rid of existing parameters in the URL and adds the new ones, if any.
+     * Because IDEA is crying about 'multiple occurrences'
+     * @param url URL to modify
+     * @param parameters parameters to add, format: 'key1=value1&key2=value2'
+     * @return modified URL
+     */
+    private String fixURL(String url, String parameters) {
+        int index = url.indexOf('?');
+        if (index == -1) {
+            // No parameters, just add the parameters
+            return url + "?" + parameters;
+        } else {
+            // Parameters exist, remove them and add the new ones
+            return url.substring(0, index) + "?" + parameters;
+        }
+    }
+
+    /**
+     * Gets rid of existing parameters in the URL and adds the new ones, if any.
+     * Because IDEA is crying about 'multiple occurrences'
+     * @param url URL to modify
+     * @return modified URL
+     */
+    private String fixURL(String url) {
+        return fixURL(url, "");
+    }
+
+    /**
      * doPost for secure stuff
      * Handles login, register, change info, and change password
      */
@@ -390,29 +418,29 @@ public class UserServlet extends HttpServlet {
                     if (session.getAttribute("user") != null) {
                         // My god you are already logged in you should not even be here
                         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                        response.sendRedirect(referer + "?result=already-logged-in");
+                        response.sendRedirect(fixURL(referer, "?result=already-logged-in"));
                     } else {
                         // Not logged in, good
                         User user = login(request.getParameter("username"), request.getParameter("password"));
                         if (user == null) {
                             // SQL error
                             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                            response.sendRedirect(referer + "?result=sql-error");
+                            response.sendRedirect(fixURL(referer, "?result=sql-error"));
                         } else {
                             // User object made, hmm
                             if (user.getId() == -2) {
                                 // Username doesn't exist
                                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                                response.sendRedirect(referer + "?result=user-not-found");
+                                response.sendRedirect(fixURL(referer, "?result=user-not-found"));
                             } else if (user.getId() == -1) {
                                 // Incorrect password
                                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                                response.sendRedirect(referer + "?result=wrong-pass");
+                                response.sendRedirect(fixURL(referer, "?result=wrong-pass"));
                             } else {
                                 // Successful login
                                 session.setAttribute("user", user);
                                 response.setStatus(HttpServletResponse.SC_OK);
-                                response.sendRedirect(referer + "?result=success");
+                                response.sendRedirect(fixURL(referer, "?result=success"));
                             }
                         }
                     }
@@ -451,24 +479,24 @@ public class UserServlet extends HttpServlet {
                             if (regUser.getId() == -3) {
                                 // SQL error
                                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                                response.sendRedirect(request.getHeader("referer") + "?result=sql-error");
+                                response.sendRedirect(fixURL(referer, "?result=sql-error"));
                             } else if (regUser.getId() == -1) {
                                 // Username already exists
                                 response.setStatus(HttpServletResponse.SC_CONFLICT);
                                 // request.getRequestDispatcher("/register.jsp?result=user-exists").forward(request, response);
-                                response.sendRedirect(request.getHeader("referer") + "?result=user-exists");
+                                response.sendRedirect(fixURL(referer, "?result=user-exists"));
                             } else {
                                 // Successful registration
                                 session.setAttribute("user", regUser);
                                 response.setStatus(HttpServletResponse.SC_OK);
-                                response.sendRedirect(request.getHeader("referer") + "?result=success");
+                                response.sendRedirect(fixURL(referer, "?result=success"));
                             }
                         }
                     }
                 } else {
                     // Not from register page, why are you here
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    response.sendRedirect(referer);
+                    response.sendRedirect(fixURL(referer));
                 }
             } else if (request.getParameter("user-changes") != null) {
                 // CAREFUL! Check if user is the same as the one being changed!
@@ -476,7 +504,7 @@ public class UserServlet extends HttpServlet {
             } else {
                 // Invalid action
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.sendRedirect(referer + "?result=invalid-action");
+                response.sendRedirect(fixURL(referer, "?result=invalid-action"));
                 return;
             }
         } else {

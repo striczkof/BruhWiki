@@ -1,5 +1,5 @@
 # Bruh Wiki
-A trash attempt to create a wiki from scratch with JSP, HTML, CSS, and JS.
+A trash attempt to create a wiki from scratch using JSP, HTML, CSS, and JS.
 
 This is an assessment for my Object-Oriented Programming class lmao.
 

@@ -1,4 +1,4 @@
-package striczkof.bruh_wiki;
+package com.striczkof.bruh_wiki;
 
 import java.io.*;
 
