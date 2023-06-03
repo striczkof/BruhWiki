@@ -1,25 +1,77 @@
 /* Main container in all pages, has to be centred relative to the browser display, and have a solid border and shadow */
 div.main {
-    background-color: #fff;
+    background-color: #f1f1f1;
     border: 1px solid #ddd;
     box-shadow: 0 0 10px #ddd;
-    margin: 0 auto;
+    margin: 20px auto;
     padding: 20px;
     width: 80%;
     overflow: hidden;
 }
 
-/* Small container, usually centred */
-div.main--small {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    box-shadow: 0 0 10px #ddd;
-    margin: 0 auto;
-    padding: 20px;
+div.main.main--big {
+    width: 80%;
+    min-width: 360px;
+}
+
+/* Content container. This should take 80% of the width of the main container, and be floated to the right */
+div.content {
+    float: right;
+    width: 80%;
+}
+
+/* Sidebar for the main container */
+/* Sidebar container. This should take 19% of the width of the main container, and be floated to the left */
+div.sidebar {
+    float: left;
+    width: 20%;
+}
+
+ul.sidebar-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    border-right: 1px solid #ddd;;
+}
+
+ul.sidebar-list li.sidebar-list__item {
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid #ddd;
+}
+
+ul.sidebar-list li.sidebar-list__item:first-child {
+    border-top: none;
+}
+
+ul.sidebar-list li.sidebar-list__item a.nav-item {
+    display: block;
+    padding: 8px 16px;
+    text-decoration: none;
+    color: #000;
+}
+
+ul.sidebar-list li.sidebar-list__item a.nav-item:hover {
+    background: rgb(241,241,241);
+    background: linear-gradient(90deg, rgba(241,241,241,1) 10%, rgba(227,227,227,1) 55%, rgba(199,199,199,1) 100%);
+}
+
+ul.sidebar-list li.sidebar-list__item a.nav-item.active {
+    background: rgb(241,241,241);
+    background: linear-gradient(90deg, rgba(241,241,241,1) 10%, rgba(227,227,227,1) 15%, rgba(199,199,199,1) 30%);
+    font-weight: bold;
+}
+
+
+ul.sidebar-list li.sidebar-list__item.sidebar-list__item--user p {
+    padding: 4px 16px;
+    text-decoration: none;
+}
+
+/* Small container */
+div.main.main--small {
     width: 25%;
     min-width: 120px;
-    overflow: hidden;
-    text-align: center;
 }
 
 /* Login/register form */
@@ -105,19 +157,7 @@ div.title {
 /*  Title text. Centre it, make it blue, and give it reflections below */
 div.title h1 {
     color: #00f;
-    font-size: 1.5em;
+    font-size: 2em;
     text-align: center;
     text-shadow: 0 0 5px #ddd;
-}
-
-/* Sidebar container. This should take 10% of the width of the main container, and be floated to the left */
-div.sidebar {
-    float: left;
-    width: 10%;
-}
-
-/* Content container. This should take 90% of the width of the main container, and be floated to the right */
-div.content {
-    float: right;
-    width: 90%;
 }

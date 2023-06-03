@@ -22,7 +22,7 @@
         <c:redirect url="index.jsp"/>
       </c:if>
     </c:if>
-    <div class="main--small">
+    <div class="main main--small">
       <div class="title">
         <h1 class="title-header">Bruh Wiki</h1>
       </div>

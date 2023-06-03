@@ -186,6 +186,10 @@ public class UserServlet extends HttpServlet {
                         // Username exists
                         user.setPasswordHash(null);
                         user.setId(rs.getInt("id"));
+                        // Set name as username if name is empty
+                        if (user.getName() == null || user.getName().equals("")) {
+                            user.setName(user.getUsername());
+                        }
                         return user;
                     } else {
                         // Username not found after successful registration, how?
@@ -418,29 +422,29 @@ public class UserServlet extends HttpServlet {
                     if (session.getAttribute("user") != null) {
                         // My god you are already logged in you should not even be here
                         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                        response.sendRedirect(fixURL(referer, "?result=already-logged-in"));
+                        response.sendRedirect(fixURL(referer, "result=already-logged-in"));
                     } else {
                         // Not logged in, good
                         User user = login(request.getParameter("username"), request.getParameter("password"));
                         if (user == null) {
                             // SQL error
                             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                            response.sendRedirect(fixURL(referer, "?result=sql-error"));
+                            response.sendRedirect(fixURL(referer, "result=sql-error"));
                         } else {
                             // User object made, hmm
                             if (user.getId() == -2) {
                                 // Username doesn't exist
                                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                                response.sendRedirect(fixURL(referer, "?result=user-not-found"));
+                                response.sendRedirect(fixURL(referer, "result=user-not-found"));
                             } else if (user.getId() == -1) {
                                 // Incorrect password
                                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                                response.sendRedirect(fixURL(referer, "?result=wrong-pass"));
+                                response.sendRedirect(fixURL(referer, "result=wrong-pass"));
                             } else {
                                 // Successful login
                                 session.setAttribute("user", user);
                                 response.setStatus(HttpServletResponse.SC_OK);
-                                response.sendRedirect(fixURL(referer, "?result=success"));
+                                response.sendRedirect(fixURL(referer, "result=success"));
                             }
                         }
                     }
@@ -479,17 +483,17 @@ public class UserServlet extends HttpServlet {
                             if (regUser.getId() == -3) {
                                 // SQL error
                                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                                response.sendRedirect(fixURL(referer, "?result=sql-error"));
+                                response.sendRedirect(fixURL(referer, "result=sql-error"));
                             } else if (regUser.getId() == -1) {
                                 // Username already exists
                                 response.setStatus(HttpServletResponse.SC_CONFLICT);
                                 // request.getRequestDispatcher("/register.jsp?result=user-exists").forward(request, response);
-                                response.sendRedirect(fixURL(referer, "?result=user-exists"));
+                                response.sendRedirect(fixURL(referer, "result=user-exists"));
                             } else {
                                 // Successful registration
                                 session.setAttribute("user", regUser);
                                 response.setStatus(HttpServletResponse.SC_OK);
-                                response.sendRedirect(fixURL(referer, "?result=success"));
+                                response.sendRedirect(fixURL(referer, "result=success"));
                             }
                         }
                     }
