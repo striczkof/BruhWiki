@@ -1,7 +1,8 @@
 package com.striczkof.bruh_wiki.controller;
 
+import com.striczkof.bruh_wiki.dao.DatabaseAccess;
+import com.striczkof.bruh_wiki.dao.PS;
 import com.striczkof.bruh_wiki.model.Article;
-import com.striczkof.bruh_wiki.model.Database;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,91 +15,75 @@ import java.sql.SQLException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 @WebServlet(name = "ArticleServlet", value = "/article-servlet")
 public class ArticleServlet extends HttpServlet {
-    private Database database;
+    private Logger log;
+    private DatabaseAccess dao;
 
     /**
      * Initialising servlet with database connection and prepared statements.
      */
     public void init() {
+        log = Logger.getLogger(ArticleServlet.class.getName());
+        log.info( getServletName() + " initialising...");
         // Database initialisation
-        // SQL statements for prepared statements, this is delineated by a semicolon
-        String sqls = "";
-        // PS[0]: Count all articles
-        sqls += "SELECT COUNT(id) FROM articles;";
-        // PS[1]: Get all articles
-        sqls += "SELECT id, category_id, UNIX_TIMESTAMP(made) AS 'made', UNIX_TIMESTAMP(lastEdited) AS 'lastEdited', title, content, hidden FROM articles ORDER BY lastEdited DESC;";
-        // PS[2]: Gets all articles, but with truncation, parameter 1 and 2 must be equal. Idiot check expected
-        sqls += "SELECT id, category_id, UNIX_TIMESTAMP(made) AS 'made', UNIX_TIMESTAMP(lastEdited) AS 'lastEdited', title, CASE WHEN CHAR_LENGTH(content) > ? THEN CONCAT(SUBSTRING(content, 1, ?), '...') ELSE content END AS 'content', hidden FROM articles ORDER BY lastEdited DESC;";
-        // PS[3]: Gets one article, has one parameter for id
-        sqls += "SELECT id, category_id, UNIX_TIMESTAMP(made) AS 'made', UNIX_TIMESTAMP(lastEdited) AS 'lastEdited', title, content, hidden  FROM articles WHERE id=?;";
-        // PS[4]: Gets one article, has one parameter for title
-        sqls += "SELECT id, category_id, UNIX_TIMESTAMP(made) AS 'made', UNIX_TIMESTAMP(lastEdited) AS 'lastEdited', title, content, hidden  FROM articles WHERE id=?;";
-        // PS[5]: Gets some article, has 2 parameters, parameter 1 must be less than parameter 2. Idiot check expected
-        sqls += "SELECT id, category_id, UNIX_TIMESTAMP(made) AS 'made', UNIX_TIMESTAMP(lastEdited) AS 'lastEdited', title, content, hidden FROM articles WHERE id BETWEEN ? AND ? ORDER BY lastEdited DESC;";
-        // PS[6]: Gets some article but with truncation, contains 4 parameters, first and second parameters must be equal, third parameter must be less than fourth parameter. Idiot check expected
-        sqls += "SELECT id, category_id, UNIX_TIMESTAMP(made) AS 'made', UNIX_TIMESTAMP(lastEdited) AS 'lastEdited', title, CASE WHEN CHAR_LENGTH(content) > ? THEN CONCAT(SUBSTRING(content, 1, ?), '...') ELSE content END AS 'content', hidden FROM articles WHERE id BETWEEN ? AND ? ORDER BY lastEdited DESC;";
-        try {
-            // Database and prepared statement initialisation
-            database = new Database(getServletContext(), sqls);
-            if (database.getConnection() == null) {
-                System.out.println("The servlet " + getServletName() + " has failed to connect to the database.");
-            } else {
-                System.out.println("The servlet " + getServletName() + " has successfully connected to the database.");
-            }
-        } catch (SQLException | ClassNotFoundException e) {
-            // Bruh
-            System.out.println("The servlet " + getServletName() + " has suffered a stronk");
-            e.printStackTrace();
-        }
+        PS[] psArray = new PS[]{
+            PS.ART_GET_COUNT,
+            PS.ART_GET_ALL,
+            PS.ART_GET_ALL_TRUNC,
+            PS.ART_GET_ONE,
+            PS.ART_GET_ONE_TRUNC,
+            PS.ART_GET_SOME_BY_EDITED_RANGE,
+            PS.ART_GET_SOME_TRUNC_BY_EDITED_RANGE,
+            PS.ART_GET_SOME_BY_MATCHING
+        };
+        dao = new DatabaseAccess(this, psArray);
+        log.info( getServletName() + " initialised.");
     }
 
     /**
      * Closing the database upon servlet destruction.
      */
     public void destroy() {
-        try {
-            database.setPreparedStatements(null);
-            database.setConnection(null);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        dao.close();
+        log.info( getServletName() + " destroyed.");
+        log = null;
     }
 
-    private Article[] getArticles(int truncate, int[] range) {
+    private Article[] getArticles(int truncate, int limit, int starts) {
         try {
             ResultSet out;
             PreparedStatement useStatement;
             // Means all
-            if (range == null) {
+            if (limit == starts) {
+                // If limit and offset are for some reason equal, i'll allow it, would be nice if both zero though.
                 if (truncate > 0) {
-                    useStatement = database.getPreparedStatements()[2];
+                    useStatement = dao.getPreparedStatement(PS.ART_GET_ONE_TRUNC);
                     useStatement.setInt(1, truncate);
                     useStatement.setInt(2, truncate);
                 } else {
-                    useStatement = database.getPreparedStatements()[1];
+                    useStatement = dao.getPreparedStatement(PS.ART_GET_ONE);
                 }
             } else {
-                if (range.length != 2 || range[0] > range[1]) {
-                    System.out.println("Bruh moment at ArticleServlet.getArticles(int, int[])");
+                if (limit <= 0 || starts <= 0) {
+                    log.warning("The servlet " + getServletName() + " has had a bruh moment.");
                     return null;
                 } else {
                     int lowerRangeParamNum = 1;
                     int upperRangeParamNum = 2;
                     if (truncate > 0) {
-                        useStatement = database.getPreparedStatements()[6];
+                        useStatement = dao.getPreparedStatement(PS.ART_GET_SOME_TRUNC_BY_EDITED_RANGE);
                         useStatement.setInt(1, truncate);
                         useStatement.setInt(2, truncate);
                         lowerRangeParamNum = 3;
                         upperRangeParamNum = 4;
                     } else {
-                        useStatement = database.getPreparedStatements()[5];
+                        useStatement = dao.getPreparedStatement(PS.ART_GET_SOME_BY_EDITED_RANGE);
                     }
-                    useStatement.setInt(lowerRangeParamNum, range[0]);
-                    useStatement.setInt(upperRangeParamNum, range[1]);
+                    useStatement.setInt(lowerRangeParamNum, limit);
+                    useStatement.setInt(upperRangeParamNum, starts);
                 }
             }
             out = useStatement.executeQuery();
@@ -122,22 +107,22 @@ public class ArticleServlet extends HttpServlet {
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (request.getParameter("show") == null) {
-            System.out.println("The servlet " + getServletName() + " has received a GET but there is no 'show' parameter.");
+            log.warning("The servlet " + getServletName() + " has received a GET but there is no 'show' parameter.");
         } else if(request.getParameter("show") != null) {
             int truncate = 0;
             if (request.getParameter("truncate") != null) {
                 try {
                     truncate = Integer.parseInt(request.getParameter("truncate"));
                 } catch (NumberFormatException e) {
-                    System.out.println("The servlet " + getServletName() + " has received a GET but the 'truncate' parameter is not a number.");
+                    log.warning("The servlet " + getServletName() + " has received a GET but the 'truncate' parameter is not a number.");
                 }
             }
             if (request.getParameter("show").equals("all")) {
-                request.setAttribute("articles", getArticles(truncate, null));
+                request.setAttribute("articles", getArticles(truncate, 0, 0));
             }
 
         } else {
-            System.out.println("The servlet " + getServletName() + " has received a GET but hit none of the ifs for some funny reason.");
+            log.warning("The servlet " + getServletName() + " has received a GET but hit none of the ifs for some funny reason.");
         }
     }
 }

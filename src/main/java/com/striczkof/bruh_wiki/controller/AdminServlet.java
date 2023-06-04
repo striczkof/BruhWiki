@@ -1,6 +1,7 @@
 package com.striczkof.bruh_wiki.controller;
 
-import com.striczkof.bruh_wiki.model.Database;
+import com.striczkof.bruh_wiki.dao.DatabaseAccess;
+import com.striczkof.bruh_wiki.dao.PS;
 import com.striczkof.bruh_wiki.model.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -10,126 +11,79 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 @WebServlet(name = "AdminServlet", value = "/admin-servlet")
 public class AdminServlet extends HttpServlet {
-    private Database database;
+    private Logger log;
+    private DatabaseAccess dao;
 
     /**
      * Initialising servlet with database connection and prepared statements.
      */
     public void init() {
+        log = Logger.getLogger(AdminServlet.class.getName());
+        log.info( getServletName() + " initialising...");
         // SQL statements for the prepared statements, this is delineated by a semicolon
-        String sqls = "";
-        // Gotta confirm if the user is an admin first
-        // PS[0]: Confirm if user is an admin, true means user is an admin, 1 parameter for id
-        sqls += "SELECT admin FROM users WHERE id = ?;";
-        // PS[1]: Count all users, 1 returned means successful count, no parameters
-        sqls += "SELECT COUNT(id) FROM users;";
-        // PS[2]: Count all articles, 1 returned means successful count, no parameters
-        sqls += "SELECT COUNT(id) FROM articles;";
-        // PS[3]: Count all categories, 1 r eturned means successful count, no parameters
-        sqls += "SELECT COUNT(id) FROM categories;";
-        // PS[4]: Get all users, 1 returned means successful user retrieval, no parameters
-        sqls += "SELECT id, username, name, admin, unix_timestamp(created) as 'created', unix_timestamp(last_login) as 'last_login' FROM users;";
-        // PS[5]: Get all articles, 1 returned means successful article retrieval, no parameters
-        sqls += "SELECT id, category_id, unix_timestamp(made) AS 'made', unix_timestamp(lastEdited) AS 'lastEdited', title, content, hidden FROM articles ORDER BY id DESC;";
-        // PS[6]: Get all categories, 1 returned means successful category retrieval, no parameters
-        sqls += "SELECT id, name FROM categories;";
-        // PS[7]: Get one user, 1 returned means successful user retrieval, 1 parameter for id
-        sqls += "SELECT id, username, name, admin, unix_timestamp(created) as 'created', unix_timestamp(last_login) as 'last_login' FROM users WHERE id = ?;";
-        // PS[8]: Get one article, 1 returned means successful article retrieval, 1 parameter for id
-        sqls += "SELECT id, category_id, unix_timestamp(made) AS 'made', unix_timestamp(lastEdited) AS 'lastEdited', title, content, hidden FROM articles WHERE id = ?;";
-        // PS[9]: Get one category, 1 returned means successful category retrieval, 1 parameter for id
-        sqls += "SELECT id, name FROM categories WHERE id = ?;";
-        // 9 statements for user changes
-        // PS[10]: Change username, 1 returned means successful username change, 2 parameters for username and id
-        sqls += "UPDATE users SET username = ? WHERE id = ?;";
-        // PS[11]: Change name, 1 returned means successful name change, 2 parameters for id and name
-        sqls += "UPDATE users SET name = ? WHERE id = ?;";
-        // PS[12]: Change username and name, 1 returned means successful username and name change, 3 parameters for id, username and name
-        sqls += "UPDATE users SET username = ?, name = ? WHERE id = ?;";
-        // PS[13]: Change admin status, 1 returned means successful admin status change, 2 parameters for id and admin status
-        sqls += "UPDATE users SET admin = ? WHERE id = ?;";
-        // PS[14]: Change username and admin status, 1 returned means successful username and admin status change, 3 parameters for id, username and admin status
-        sqls += "UPDATE users SET username = ?, admin = ? WHERE id = ?;";
-        // PS[15]: Change name and admin status, 1 returned means successful name and admin status change, 3 parameters for id, name and admin status
-        sqls += "UPDATE users SET name = ?, admin = ? WHERE id = ?;";
-        // PS[16]: Change username, name and admin status, 1 returned means successful username, name and admin status change, 4 parameters for id, username, name and admin status
-        sqls += "UPDATE users SET username = ?, name = ?, admin = ? WHERE id = ?;";
-        // PS[17]: Delete user, 1 returned means successful user deletion, 1 parameter for id
-        sqls += "DELETE FROM users WHERE id = ?;";
-        // 15 statements to change category, title, content and hidden status, jesus
-        // PS[18]: Change category, 1 returned means successful category change, 2 parameters for category id and article id
-        sqls += "UPDATE articles SET category_id = ? WHERE id = ?;";
-        // PS[19]: Change title, 1 returned means successful title change, 2 parameters for title and article id
-        sqls += "UPDATE articles SET title = ? WHERE id = ?;";
-        // PS[20]: Change content, 1 returned means successful content change, 2 parameters for content and article id
-        sqls += "UPDATE articles SET content = ? WHERE id = ?;";
-        // PS[21]: Change hidden status, 1 returned means successful hidden status change, 2 parameters for hidden status and article id
-        sqls += "UPDATE articles SET hidden = ? WHERE id = ?;";
-        // PS[22]: Change category and title, 1 returned means successful category and title change, 3 parameters for category id, title and article id
-        sqls += "UPDATE articles SET category_id = ?, title = ? WHERE id = ?;";
-        // PS[23]: Change category and content, 1 returned means successful category and content change, 3 parameters for category id, content and article id
-        sqls += "UPDATE articles SET category_id = ?, content = ? WHERE id = ?;";
-        // PS[24]: Change category and hidden status, 1 returned means successful category and hidden status change, 3 parameters for category id, hidden status and article id
-        sqls += "UPDATE articles SET category_id = ?, hidden = ? WHERE id = ?;";
-        // PS[25]: Change title and content, 1 returned means successful title and content change, 3 parameters for title, content and article id
-        sqls += "UPDATE articles SET title = ?, content = ? WHERE id = ?;";
-        // PS[26]: Change title and hidden status, 1 returned means successful title and hidden status change, 3 parameters for title, hidden status and article id
-        sqls += "UPDATE articles SET title = ?, hidden = ? WHERE id = ?;";
-        // PS[27]: Change content and hidden status, 1 returned means successful content and hidden status change, 3 parameters for content, hidden status and article id
-        sqls += "UPDATE articles SET content = ?, hidden = ? WHERE id = ?;";
-        // PS[28]: Change category, title and content, 1 returned means successful category, title and content change, 4 parameters for category id, title, content and article id
-        sqls += "UPDATE articles SET category_id = ?, title = ?, content = ? WHERE id = ?;";
-        // PS[29]: Change category, title and hidden status, 1 returned means successful category, title and hidden status change, 4 parameters for category id, title, hidden status and article id
-        sqls += "UPDATE articles SET category_id = ?, title = ?, hidden = ? WHERE id = ?;";
-        // PS[30]: Change category, content and hidden status, 1 returned means successful category, content and hidden status change, 4 parameters for category id, content, hidden status and article id
-        sqls += "UPDATE articles SET category_id = ?, content = ?, hidden = ? WHERE id = ?;";
-        // PS[31]: Change title, content and hidden status, 1 returned means successful title, content and hidden status change, 4 parameters for title, content, hidden status and article id
-        sqls += "UPDATE articles SET title = ?, content = ?, hidden = ? WHERE id = ?;";
-        // PS[32]: Change category, title, content and hidden status, 1 returned means successful category, title, content and hidden status change, 5 parameters for category id, title, content, hidden status and article id
-        sqls += "UPDATE articles SET category_id = ?, title = ?, content = ?, hidden = ? WHERE id = ?;";
-        // PS[33]: Delete article, 1 returned means successful article deletion, 1 parameter for id
-        sqls += "DELETE FROM articles WHERE id = ?;";
-        // PS[34]: Change category name, 1 returned means successful category name change, 2 parameters for name and id
-        sqls += "UPDATE categories SET name = ? WHERE id = ?;";
-        // PS[35]: Delete category, 1 returned means successful category deletion, 1 parameter for id
-        sqls += "DELETE FROM categories WHERE id = ?;";
+        PS[] ps = new PS[]{
+                PS.USERS_GET_ADMIN_ONE,
+                PS.USERS_GET_COUNT,
+                PS.ART_GET_COUNT,
+                PS.CAT_GET_COUNT,
+                PS.USERS_GET_ALL,
+                PS.ART_GET_ALL,
+                PS.CAT_GET_ALL,
+                PS.USERS_GET_ONE,
+                PS.ART_GET_ONE,
+                PS.CAT_GET_ONE,
+                PS.USERS_SET_UNAME_ONE,
+                PS.USERS_SET_NAME_ONE,
+                PS.USERS_SET_UNAME_NAME_ONE,
+                PS.USERS_ADMIN_SET_ADMIN_ONE,
+                PS.USERS_ADMIN_SET_UNAME_ADMIN_ONE,
+                PS.USERS_ADMIN_SET_NAME_ADMIN_ONE,
+                PS.USERS_ADMIN_SET_UNAME_NAME_ADMIN_ONE,
+                PS.USERS_ADMIN_DEL_ONE,
+                PS.ART_ADMIN_SET_CAT_ONE,
+                PS.ART_ADMIN_SET_TITLE_ONE,
+                PS.ART_ADMIN_SET_CONTENT_ONE,
+                PS.ART_ADMIN_SET_HIDDEN_ONE,
+                PS.ART_ADMIN_SET_CAT_TITLE_ONE,
+                PS.ART_ADMIN_SET_CAT_CONTENT_ONE,
+                PS.ART_ADMIN_SET_CAT_HIDDEN_ONE,
+                PS.ART_ADMIN_SET_TITLE_CONTENT_ONE,
+                PS.ART_ADMIN_SET_TITLE_HIDDEN_ONE,
+                PS.ART_ADMIN_SET_CONTENT_HIDDEN_ONE,
+                PS.ART_ADMIN_SET_CAT_TITLE_CONTENT_ONE,
+                PS.ART_ADMIN_SET_CAT_TITLE_HIDDEN_ONE,
+                PS.ART_ADMIN_SET_CAT_CONTENT_HIDDEN_ONE,
+                PS.ART_ADMIN_SET_TITLE_CONTENT_HIDDEN_ONE,
+                PS.ART_ADMIN_SET_CAT_TITLE_CONTENT_HIDDEN_ONE,
+                PS.ART_ADMIN_DEL_ONE,
+                PS.CAT_ADMIN_SET_NAME_ONE,
+                PS.CAT_ADMIN_DEL_ONE
+        };
         // FUCKING FINALLY
 
-        try {
-            // Database and prepared statement initialisation
-            database = new Database(getServletContext(), sqls);
-            if (database.getConnection() == null) {
-                System.out.println("The servlet " + getServletName() + " has failed to connect to the database.");
-            } else {
-                System.out.println("The servlet " + getServletName() + " has successfully connected to the database.");
-            }
-        } catch (SQLException | ClassNotFoundException e) {
-            // Bruh
-            System.out.println("The servlet " + getServletName() + " has suffered a stronk");
-            e.printStackTrace();
-        }
+        dao = new DatabaseAccess(this, ps);
+        log.info( getServletName() + " initialised.");
     }
 
     /**
      * Closing the database upon servlet destruction.
      */
     public void destroy() {
-        try {
-            database.setPreparedStatements(null);
-            database.setConnection(null);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        dao.close();
+        log.info(getServletName() + " destroyed.");
+        log = null;
     }
 
     /**
      * Make sure that the user is logged in and is an admin.
-     * No SQL wizardry needed, session check is enough.
+     * Quick SQL just in case they got demoted live lol
      * @param session The session to check. Should be "request.getSession(false)" to prevent a new session from being created.
      * @return True if the user is logged in and is an admin, false otherwise.
      */
@@ -138,7 +92,25 @@ public class AdminServlet extends HttpServlet {
             if (session.getAttribute("user") != null) {
                 // It will be assumed that the user attribute is actually a user object, if not, fuck me
                 User user = (User) session.getAttribute("user");
-                return user.getAdmin();
+                if (user.getAdmin()) {
+                    try {
+                        PreparedStatement ps = dao.getPreparedStatement(PS.USERS_GET_ADMIN_ONE);
+                        ps.setInt(1, user.getId());
+                        ResultSet rs = ps.executeQuery();
+                        if (rs.next()) {
+                            return rs.getBoolean("admin");
+                        } else {
+                            // User not found, boi got deleted live
+                            return false;
+                        }
+                    } catch (SQLException e) {
+                        System.out.println("The servlet " + getServletName() + " has had a bruh moment.");
+                        e.printStackTrace();
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
             } else {
                 return false;
             }

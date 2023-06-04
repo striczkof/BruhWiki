@@ -9,6 +9,12 @@
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
 <html>
+  <!-- get session and user if exists -->
+  <c:if test="${not empty sessionScope.user}">
+    <c:if test="${empty param.result}">
+      <c:redirect url="index.jsp"/>
+    </c:if>
+  </c:if>
   <head>
     <meta charset="UTF-8"/>
     <title>Bruh Wiki - Login</title>
@@ -16,12 +22,6 @@
     <script src="js/login-register.js" type="application/javascript"></script>
   </head>
   <body>
-    <!-- Check if user is logged in -->
-    <c:if test="${not empty sessionScope.user}">
-      <c:if test="${empty param.result}">
-        <c:redirect url="index.jsp"/>
-      </c:if>
-    </c:if>
     <div class="main main--small">
       <div class="title">
         <h1 class="title-header">Bruh Wiki</h1>

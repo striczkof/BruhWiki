@@ -1,6 +1,7 @@
 package com.striczkof.bruh_wiki.controller;
 
-import com.striczkof.bruh_wiki.model.Database;
+import com.striczkof.bruh_wiki.dao.DatabaseAccess;
+import com.striczkof.bruh_wiki.dao.PS;
 import com.striczkof.bruh_wiki.model.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -17,10 +18,12 @@ import java.security.SecureRandom;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 @WebServlet(name = "UserServlet", value = "/user-servlet")
 public class UserServlet extends HttpServlet {
-    private Database database;
+    private Logger log;
+    private DatabaseAccess dao;
     // Initializing commonly used context parameters
     private int saltSize;
     private String hashAlgorithm;
@@ -29,65 +32,37 @@ public class UserServlet extends HttpServlet {
      * Initialising servlet with database connection and prepared statements.
      */
     public void init() {
+        log = Logger.getLogger(UserServlet.class.getName());
+        log.info( getServletName() + " initialising...");
         // Parameter initialisation
         saltSize = Integer.parseInt(getServletContext().getInitParameter("salt-size"));
         hashAlgorithm = getServletContext().getInitParameter("hashing-algorithm");
         // SQL statements for the prepared statements
-        String sqls = "";
-        // PS[0]: Count all users
-        sqls += "SELECT COUNT(id) FROM users;";
-        // PS[1]: Get all users
-        sqls += "SELECT id, username, name, admin, UNIX_TIMESTAMP(created) as 'created', UNIX_TIMESTAMP(last_login) as 'last_login' FROM users;";
-        // PS[2]: Get salt for hashing and id for authentication, 1 parameter for username, returns none if username not found
-        sqls += "SELECT id, salt FROM users WHERE username = ?;";
-        // PS[3]: Update user's last login date, 1 returned means successful login, 2 parameters for id and hash
-        sqls += "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ? AND hash = ?;";
-        // PS[4]: Insert new user, 1 returned means successful registration, 4 parameters for username, hash and salt, and name
-        sqls += "INSERT INTO users (username, hash, salt, name) VALUES (?, ?, ?, ?);";
-        // PS[5]: Change password, 1 returned means successful password change, 3 parameters for new hash and salt, id, and old hash
-        sqls += "UPDATE users SET hash = ?, salt = ? WHERE id = ? AND hash = ?;";
-        // PS[6]: Delete user, asks for password, 1 returned means successful deletion, 2 parameters for id and hash
-        sqls += "DELETE FROM users WHERE id = ? AND hash = ?;";
-        // PS[7]: Get user by id except for password hash, 1 parameter for id
-        sqls += "SELECT id, username, salt, name, admin, UNIX_TIMESTAMP(created) as 'created', UNIX_TIMESTAMP(last_login) as 'last_login' FROM users WHERE id = ?;";
-        // 3 statements just to change either the username or name or both
-        // User and admin made changes so no admin status change
-        // PS[8]: Change username, 1 returned means successful username change, 2 parameters for id and username
-        sqls += "UPDATE users SET username = ? WHERE id = ?;";
-        // PS[9]: Change name, 1 returned means successful name change, 2 parameters for id and name
-        sqls += "UPDATE users SET name = ? WHERE id = ?;";
-        // PS[10]: Change username and name, 1 returned means successful username and name change, 3 parameters for id, username and name
-        sqls += "UPDATE users SET username = ?, name = ? WHERE id = ?;";
-        // PS[11]: Look up users by username, returns id and username, 1 parameter for username
-        sqls += "SELECT id, username FROM users WHERE username LIKE %?%;";
-        // PS[12]: Check if username exists, returns id if username exists, 1 parameter for username
-        sqls += "SELECT id FROM users WHERE username = ?;";
-        try {
-            // Database and prepared statement initialisation
-            database = new Database(getServletContext(), sqls);
-            if (database.getConnection() == null) {
-                System.out.println("The servlet " + getServletName() + " has failed to connect to the database.");
-            } else {
-                System.out.println("The servlet " + getServletName() + " has successfully connected to the database.");
-            }
-        } catch (SQLException | ClassNotFoundException e) {
-            // Bruh
-            System.out.println("The servlet " + getServletName() + " has suffered a stronk");
-            e.printStackTrace();
-        }
-
+        PS[] ps = new PS[]{
+                PS.USERS_GET_COUNT,
+                PS.USERS_GET_ALL,
+                PS.USERS_GET_ONE,
+                PS.USERS_GET_ID_ONE_BY_UNAME,
+                PS.USERS_GET_ID_SALT_ONE_BY_UNAME,
+                PS.USERS_MAKE_ONE,
+                PS.USERS_SET_LAST_LOGIN_ONE_BY_ID_HASH,
+                PS.USERS_DEL_ONE_BY_ID_HASH,
+                PS.USERS_SET_PASSWORD_ONE_BY_ID_HASH,
+                PS.USERS_SET_UNAME_ONE,
+                PS.USERS_SET_NAME_ONE,
+                PS.USERS_SET_UNAME_NAME_ONE,
+                PS.USERS_GET_ID_UNAME_ONE_LIKE_UNAME
+        };
+        dao = new DatabaseAccess(this, ps);
+        log.info("UserServlet initialised.");
     }
 
     /**
      * Closing the database upon servlet destruction.
      */
     public void destroy() {
-        try {
-            database.setPreparedStatements(null);
-            database.setConnection(null);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        dao.close();
+        log = null;
     }
 
     /**
@@ -97,7 +72,7 @@ public class UserServlet extends HttpServlet {
      */
     private User getUser(int id) {
         try {
-            PreparedStatement ps = database.getPreparedStatements()[7];
+            PreparedStatement ps = dao.getPreparedStatement(PS.USERS_GET_ONE);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -108,7 +83,7 @@ public class UserServlet extends HttpServlet {
                 return null;
             }
         } catch (SQLException e) {
-            // Bruh
+            log.severe("The servlet " + getServletName() + " has had a bruh moment.");
             e.printStackTrace();
             return null;
         }
@@ -122,7 +97,7 @@ public class UserServlet extends HttpServlet {
      */
     private User login(String username, String password) {
         try {
-            PreparedStatement ps = database.getPreparedStatements()[2];
+            PreparedStatement ps = dao.getPreparedStatement(PS.USERS_GET_ID_SALT_ONE_BY_UNAME);
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -130,7 +105,7 @@ public class UserServlet extends HttpServlet {
                 int id = rs.getInt("id");
                 byte[] salt = rs.getBytes("salt");
                 byte[] hash = hashPassword(password, salt);
-                ps = database.getPreparedStatements()[3];
+                ps = dao.getPreparedStatement(PS.USERS_SET_LAST_LOGIN_ONE_BY_ID_HASH);
                 ps.setInt(1, id);
                 ps.setBytes(2, hash);
                 if (ps.executeUpdate() == 1) {
@@ -149,7 +124,7 @@ public class UserServlet extends HttpServlet {
                 return user;
             }
         } catch (SQLException e) {
-            // Bruh
+            log.severe("The servlet " + getServletName() + " has had a bruh moment.");
             e.printStackTrace();
             return null;
         }
@@ -162,7 +137,7 @@ public class UserServlet extends HttpServlet {
      */
     private User register(User user) {
         try {
-            PreparedStatement ps = database.getPreparedStatements()[12];
+            PreparedStatement ps = dao.getPreparedStatement(PS.USERS_GET_ID_ONE_BY_UNAME);
             ps.setString(1, user.getUsername());
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -171,7 +146,7 @@ public class UserServlet extends HttpServlet {
                 return user;
             } else {
                 // Username doesn't exist
-                ps = database.getPreparedStatements()[4];
+                ps = dao.getPreparedStatement(PS.USERS_MAKE_ONE);
                 ps.setString(1, user.getUsername());
                 ps.setBytes(2, user.getPasswordHash());
                 ps.setBytes(3, user.getPasswordSalt());
@@ -179,7 +154,7 @@ public class UserServlet extends HttpServlet {
                 if (ps.executeUpdate() == 1) {
                     // Successful registration
                     // Get user id
-                    ps = database.getPreparedStatements()[12];
+                    ps = dao.getPreparedStatement(PS.USERS_GET_ID_ONE_BY_UNAME);
                     ps.setString(1, user.getUsername());
                     rs = ps.executeQuery();
                     if (rs.next()) {
@@ -222,7 +197,7 @@ public class UserServlet extends HttpServlet {
             PreparedStatement ps;
             // If changing username, check if username is taken by another user
             if (!user.getUsername().equals(username)) {
-                ps = database.getPreparedStatements()[12];
+                ps = dao.getPreparedStatement(PS.USERS_GET_ID_ONE_BY_UNAME);
                 ps.setString(1, username);
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
@@ -234,19 +209,19 @@ public class UserServlet extends HttpServlet {
             if (username != null) {
                 if (name != null) {
                     // Change both
-                    ps = database.getPreparedStatements()[10];
+                    ps = dao.getPreparedStatement(PS.USERS_SET_UNAME_NAME_ONE);
                     ps.setString(1, username);
                     ps.setString(2, name);
                     ps.setInt(3, user.getId());
                 } else {
                     // Change username only
-                    ps = database.getPreparedStatements()[8];
+                    ps = dao.getPreparedStatement(PS.USERS_SET_UNAME_ONE);
                     ps.setString(1, username);
                     ps.setInt(2, user.getId());
                 }
             } else {
                 // Change name only
-                ps = database.getPreparedStatements()[9];
+                ps = dao.getPreparedStatement(PS.USERS_SET_NAME_ONE);
                 ps.setString(1, name);
                 ps.setInt(2, user.getId());
             }
@@ -285,7 +260,7 @@ public class UserServlet extends HttpServlet {
             // Generate new hash and salt
             byte[] salt = generateSalt();
             byte[] hash = hashPassword(newPassword, salt);
-            PreparedStatement ps = database.getPreparedStatements()[5];
+            PreparedStatement ps = dao.getPreparedStatement(PS.USERS_SET_PASSWORD_ONE_BY_ID_HASH);
             ps.setBytes(1, salt);
             ps.setBytes(2, hash);
             // Match user id and old password hash
@@ -346,38 +321,6 @@ public class UserServlet extends HttpServlet {
     }
 
     /**
-     * doGet for quick stuff
-     * Handles logout
-     */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("doGet received");
-        // Gets (or creates) the session
-        HttpSession session = request.getSession(true);
-
-        String referer = request.getHeader("referer");
-        // Handles logout
-        if (referer != null) {
-            // Handles logout
-            if (request.getParameter("logout") != null) {
-                if (session.getAttribute("user") != null) {
-                    // User logged in, log out
-                    session.removeAttribute("user");
-                    session.invalidate();
-                    response.sendRedirect(referer);
-                } else {
-                    // Not even logged in, why are you here
-                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    session.invalidate();
-                    response.sendRedirect(referer);
-                }
-            }
-        } else {
-            // No referer, go to index
-            response.sendRedirect("index.jsp");
-        }
-    }
-
-    /**
      * Gets rid of existing parameters in the URL and adds the new ones, if any.
      * Because IDEA is crying about 'multiple occurrences'
      * @param url URL to modify
@@ -406,9 +349,42 @@ public class UserServlet extends HttpServlet {
     }
 
     /**
+     * doGet for quick stuff
+     * Handles logout
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Gets (or creates) the session
+        HttpSession session = request.getSession(true);
+
+        String referer = request.getHeader("referer");
+        // Handles logout
+        if (referer != null) {
+            // Handles logout
+            if (request.getParameter("logout") != null) {
+                if (session.getAttribute("user") != null) {
+                    // User logged in, log out
+                    session.removeAttribute("user");
+                    session.invalidate();
+                    response.sendRedirect(referer);
+                } else {
+                    // Not even logged in, why are you here
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    session.invalidate();
+                    response.sendRedirect(referer);
+                }
+            }
+        } else {
+            // No referer, go to index
+            response.sendRedirect("index.jsp");
+        }
+    }
+
+    /**
      * doPost for secure stuff
      * Handles login, register, change info, and change password
      */
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Gets (or creates) the session
         HttpSession session = request.getSession(true);
@@ -417,6 +393,10 @@ public class UserServlet extends HttpServlet {
         if (referer != null) {
             // Handles login, register, change info, and change password
             if (request.getParameter("login") != null) {
+                // If referred from user.jsp, accept it then replace user.jsp with login.jsp. Dirty hack ik but im too lazy to do it properly
+                if (referer.contains("user.jsp")) {
+                    referer = referer.replace("user.jsp", "login.jsp");
+                }
                 if (referer.contains("login.jsp")) {
                     // Logs in
                     if (session.getAttribute("user") != null) {
