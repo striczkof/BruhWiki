@@ -194,6 +194,8 @@ public class UserServlet extends HttpServlet {
      */
     private User updateUser(User user, String username, String name) {
         try {
+            if (username.isEmpty()) username = null;
+            if (name.isEmpty()) name = null;
             PreparedStatement ps;
             // If changing username, check if username is taken by another user
             if (!user.getUsername().equals(username)) {
@@ -229,7 +231,9 @@ public class UserServlet extends HttpServlet {
                 // Update successful
                 // Update user object
                 if (username != null) {
+                    String oldUname = user.getUsername();
                     user.setUsername(username);
+                    if (user.getName().equals(oldUname)) user.setName(username);
                 }
                 if (name != null) {
                     user.setName(name);
@@ -261,8 +265,8 @@ public class UserServlet extends HttpServlet {
             byte[] salt = generateSalt();
             byte[] hash = hashPassword(newPassword, salt);
             PreparedStatement ps = dao.getPreparedStatement(PS.USERS_SET_PASSWORD_ONE_BY_ID_HASH);
-            ps.setBytes(1, salt);
-            ps.setBytes(2, hash);
+            ps.setBytes(1, hash);
+            ps.setBytes(2, salt);
             // Match user id and old password hash
             ps.setInt(3, user.getId());
             ps.setBytes(4, hashPassword(oldPassword, user.getPasswordSalt()));
@@ -277,6 +281,31 @@ public class UserServlet extends HttpServlet {
             }
         } catch (SQLException e) {
             // Bruh
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Delete user
+     * @param user user to be deleted
+     * @param password password for confirmation
+     * @return user object with id -1 if successful, unchanged user object if unsuccessful. null if SQL error
+     */
+    private User deleteUser(User user, String password) {
+        try {
+            PreparedStatement ps = dao.getPreparedStatement(PS.USERS_DEL_ONE_BY_ID_HASH);
+            ps.setInt(1, user.getId());
+            ps.setBytes(2, hashPassword(password, user.getPasswordSalt()));
+            if (ps.executeUpdate() == 1) {
+                // Delete successful
+                // Update user object
+                user.setId(-1);
+            }
+            return user;
+        } catch (SQLException e) {
+            // Bruh
+            log.severe("Servlet " + getServletName() + " has hit a SQL error");
             e.printStackTrace();
             return null;
         }
@@ -482,9 +511,98 @@ public class UserServlet extends HttpServlet {
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     response.sendRedirect(fixURL(referer));
                 }
-            } else if (request.getParameter("user-changes") != null) {
+            } else if (request.getParameter("user-change") != null) {
+                // Changes user info
                 // CAREFUL! Check if user is the same as the one being changed!
-                return;
+                // No need to check, just use the requesters user object
+                if (request.getSession(false).getAttribute("user") != null) {
+                    User user = (User) session.getAttribute("user");
+                    if (request.getParameter("name") != null || request.getParameter("username") != null) {
+                        // Change username and name
+                        String username = request.getParameter("username");
+                        String name = request.getParameter("name");
+                        String oldUname = user.getUsername();
+                        String oldName = user.getName();
+                        user = updateUser(user, username, name);
+                        // Check result
+                        if (user == null) {
+                            // SQL error
+                            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                            response.sendRedirect(fixURL(referer, "result=sql-error"));
+                        } else if (!username.isEmpty() && !username.equals(oldUname) || (!name.isEmpty() && !name.equals(oldName))) {
+                            // Something changed
+                            session.setAttribute("user", user);
+                            response.setStatus(HttpServletResponse.SC_OK);
+                            response.sendRedirect(fixURL(referer, "result=success"));
+                        } else {
+                            // Nothing changed
+                            response.sendRedirect(fixURL(referer, "result=no-change"));
+                        }
+                        return;
+                    } else if (request.getParameter("old-password") != null) {
+                        // Change password
+                        String password = request.getParameter("password");
+                        if (password.length() > 0) {
+                            byte[] oldSalt = user.getPasswordSalt();
+                            user = changePassword(user, password, request.getParameter("old-password"));
+                            if (user == null) {
+                                // SQL error
+                                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                                response.sendRedirect(fixURL(referer, "result=sql-error"));
+                            } else if (user.getPasswordSalt() != oldSalt) {
+                                // Password changed
+                                session.setAttribute("user", user);
+                                response.setStatus(HttpServletResponse.SC_OK);
+                                response.sendRedirect(fixURL(referer, "result=success"));
+                            } else {
+                                // Password not changed, wrong old password
+                                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                                response.sendRedirect(fixURL(referer, "result=wrong-pass"));
+                            }
+                        } else {
+                            // Invalid password
+                            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                            response.sendRedirect(fixURL(referer, "result=no-change"));
+                        }
+                        return;
+                    } else if (request.getParameter("password-del") != null) {
+                        // Delete password confirmation checks out
+                        // Chicken check
+                        if (request.getParameter("delete") == null) {
+                            // Bro chickened out but that's okay
+                            response.setStatus(HttpServletResponse.SC_OK);
+                            response.sendRedirect(fixURL(referer, "result=no-change"));
+                            return;
+                        }
+                        user = deleteUser(user, request.getParameter("password-del"));
+                        if (user == null) {
+                            // SQL error
+                            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                            response.sendRedirect(fixURL(referer, "result=sql-error"));
+                        } else if (user.getId() == -1) {
+                            // Successful deletion
+                            session.setAttribute("user", null);
+                            session.invalidate();
+                            response.setStatus(HttpServletResponse.SC_OK);
+                            response.sendRedirect(fixURL(referer, "change=delete&result=success"));
+                        } else {
+                            // Wrong password
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.sendRedirect(fixURL(referer, "result=wrong-pass"));
+                        }
+                    } else {
+                        // Invalid action
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        response.sendRedirect(fixURL(referer, "result=no-change"));
+                    }
+                    return;
+
+                } else {
+                    // You are not supposed to be here
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    response.sendRedirect(fixURL(referer));
+                    return;
+                }
             } else {
                 // Invalid action
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -494,6 +612,7 @@ public class UserServlet extends HttpServlet {
         } else {
             // No referer, go to index
             response.sendRedirect("index.jsp");
+            return;
         }
     }
 }

@@ -1,12 +1,16 @@
 package com.striczkof.bruh_wiki.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Article implements Serializable {
     private int id; // Unique ID. INT type.
     private int categoryId; // Unique Category ID. INT type.
+    private String categoryName; // Category name. TINYTEXT type, joined.
     private long made; // Unix Timestamp. BIGINT type.
     private long lastEdited; // Unix timestamp. BIGINT type.
+    private Date madeDate; // Date object. not stored in database.
+    private Date lastEditedDate; // Date object. not stored in database.
     private String title; // Article title. TINYTEXT type.
     private String content; // Article content. LONGTEXT type.
 
@@ -17,11 +21,14 @@ public class Article implements Serializable {
     }
 
     // All variables initialized constructor
-    public Article(int id, int categoryId, long made, long lastEdited, String title, String content, boolean hidden) {
+    public Article(int id, int categoryId, String categoryName, long made, long lastEdited, String title, String content, boolean hidden) {
         this.id = id;
         this.categoryId = categoryId;
+        this.categoryName = categoryName;
         this.made = made;
         this.lastEdited = lastEdited;
+        this.madeDate = new Date(made * 1000);
+        this.lastEditedDate = new Date(lastEdited * 1000);
         this.title = title;
         this.content = content;
         this.hidden = hidden;
@@ -43,6 +50,14 @@ public class Article implements Serializable {
         this.categoryId = categoryId;
     }
 
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
     public long getMade() {
         return made;
     }
@@ -57,6 +72,22 @@ public class Article implements Serializable {
 
     public void setLastEdited(long lastEdited) {
         this.lastEdited = lastEdited;
+    }
+
+    public Date getMadeDate() {
+        return madeDate;
+    }
+
+    public void setMadeDate(Date madeDate) {
+        this.madeDate = madeDate;
+    }
+
+    public Date getLastEditedDate() {
+        return lastEditedDate;
+    }
+
+    public void setLastEditedDate(Date lastEditedDate) {
+        this.lastEditedDate = lastEditedDate;
     }
 
     public String getTitle() {

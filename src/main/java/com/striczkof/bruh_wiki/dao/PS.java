@@ -4,6 +4,7 @@ package com.striczkof.bruh_wiki.dao;
  * This enum is used as a selector for SQL statements. For initialisation of prepared statements, use {@link SQLStatement}.
  * The constants of this and {@link SQLStatement} must be named the same.
  * Constant names: table name_(admin if admin only)_(make/get/set/del)_(specific columns)_number_modifier_(by_value for where except none or only id)
+ * @see SQLStatement
  */
 public enum PS {
     // User stuff
@@ -122,6 +123,21 @@ public enum PS {
     ART_GET_COUNT,
 
     /**
+     * @see SQLStatement#ART_GET_COUNT_BY_CAT
+     */
+    ART_GET_COUNT_BY_CAT,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_COUNT
+     */
+    ART_ADMIN_GET_COUNT,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_COUNT_BY_CAT
+     */
+    ART_ADMIN_GET_COUNT_BY_CAT,
+
+    /**
      * @see SQLStatement#ART_GET_ONE
      */
     ART_GET_ONE,
@@ -142,6 +158,27 @@ public enum PS {
     ART_GET_ALL_TRUNC,
 
     /**
+     * @see SQLStatement#ART_GET_ALL_BY_CAT
+     */
+    ART_GET_ALL_BY_CAT,
+
+    /**
+     * @see SQLStatement#ART_GET_ALL_TRUNC_BY_CAT
+     */
+    ART_GET_ALL_TRUNC_BY_CAT,
+
+    /**
+     * @see SQLStatement#ART_GET_SOME_BY_CAT_EDITED_RANGE
+     */
+    ART_GET_SOME_BY_CAT_EDITED_RANGE,
+
+    /**
+     * @see SQLStatement#ART_GET_SOME_TRUNC_BY_CAT_EDITED_RANGE
+     */
+    ART_GET_SOME_TRUNC_BY_CAT_EDITED_RANGE,
+
+
+    /**
      * @see SQLStatement#ART_GET_SOME_BY_EDITED_RANGE
      */
     ART_GET_SOME_BY_EDITED_RANGE,
@@ -152,9 +189,136 @@ public enum PS {
     ART_GET_SOME_TRUNC_BY_EDITED_RANGE,
 
     /**
+     * @see SQLStatement#ART_GET_COUNT_BY_MATCHING
+     */
+    ART_GET_COUNT_BY_MATCHING,
+
+    /**
+     * Already truncating!
      * @see SQLStatement#ART_GET_SOME_BY_MATCHING
      */
     ART_GET_SOME_BY_MATCHING,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_ONE_HIDDEN
+     */
+    ART_ADMIN_GET_ONE_HIDDEN,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_ONE_HIDDEN_TRUNC
+     */
+    ART_ADMIN_GET_ONE_HIDDEN_TRUNC,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_ALL_HIDDEN
+     */
+    ART_ADMIN_GET_ALL_HIDDEN,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_ALL_HIDDEN_TRUNC
+     */
+    ART_ADMIN_GET_ALL_HIDDEN_TRUNC,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_ALL_HIDDEN_BY_CAT
+     */
+    ART_ADMIN_GET_ALL_HIDDEN_BY_CAT,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_ALL_HIDDEN_TRUNC_BY_CAT
+     */
+    ART_ADMIN_GET_ALL_HIDDEN_TRUNC_BY_CAT,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_SOME_HIDDEN_BY_CAT_EDITED_RANGE
+     */
+    ART_ADMIN_GET_SOME_HIDDEN_BY_CAT_EDITED_RANGE,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_SOME_HIDDEN_TRUNC_BY_CAT_EDITED_RANGE
+     */
+    ART_ADMIN_GET_SOME_HIDDEN_TRUNC_BY_CAT_EDITED_RANGE,
+
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_SOME_HIDDEN_BY_EDITED_RANGE
+     */
+    ART_ADMIN_GET_SOME_HIDDEN_BY_EDITED_RANGE,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_SOME_HIDDEN_TRUNC_BY_EDITED_RANGE
+     */
+    ART_ADMIN_GET_SOME_HIDDEN_TRUNC_BY_EDITED_RANGE,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_COUNT_HIDDEN_BY_MATCHING
+     */
+    ART_ADMIN_GET_COUNT_HIDDEN_BY_MATCHING,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_SOME_HIDDEN_BY_MATCHING
+     */
+    ART_ADMIN_GET_SOME_HIDDEN_BY_MATCHING,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_ONE
+     */
+    ART_ADMIN_GET_ONE,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_ONE_TRUNC
+     */
+    ART_ADMIN_GET_ONE_TRUNC,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_ALL
+     */
+    ART_ADMIN_GET_ALL,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_ALL_TRUNC
+     */
+    ART_ADMIN_GET_ALL_TRUNC,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_ALL_BY_CAT
+     */
+    ART_ADMIN_GET_ALL_BY_CAT,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_ALL_TRUNC_BY_CAT
+     */
+    ART_ADMIN_GET_ALL_TRUNC_BY_CAT,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_SOME_HIDDEN_BY_EDITED_RANGE
+     */
+    ART_ADMIN_GET_SOME_BY_CAT_EDITED_RANGE,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_SOME_TRUNC_BY_CAT_EDITED_RANGE
+     */
+    ART_ADMIN_GET_SOME_TRUNC_BY_CAT_EDITED_RANGE,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_SOME_BY_MATCHING
+     */
+    ART_ADMIN_GET_SOME_BY_EDITED_RANGE,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_SOME_TRUNC_BY_EDITED_RANGE
+     */
+    ART_ADMIN_GET_SOME_TRUNC_BY_EDITED_RANGE,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_COUNT_BY_MATCHING
+     */
+    ART_ADMIN_GET_COUNT_BY_MATCHING,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_SOME_BY_MATCHING
+     */
+    ART_ADMIN_GET_SOME_BY_MATCHING,
 
     /**
      * @see SQLStatement#ART_ADMIN_SET_CAT_ONE

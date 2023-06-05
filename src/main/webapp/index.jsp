@@ -16,6 +16,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 --%>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -37,17 +38,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                             <li class="sidebar-list__item sidebar-list__item--user">
                                 <p>Hi! You're not logged in.</p>
                                 <p><a href="login.jsp">Login</a> or <a href="register.jsp">register</a></p>
-                                <form class="search" action="/article-servlet" method="get">
-                                    <label hidden="hidden" for="search">Search</label>
-                                    <input class="search__input" type="text" name="search" id="search" placeholder="Search" required/>
-                                    <button hidden="hidden" type="submit">Search</button>
-                                </form>
                             </li>
                         </c:when>
                         <c:otherwise>
                             <!-- If user's name is null, use their username as their name -->
                             <!-- Wait a minute, I can just do that in the bean -->
-                            <li class="sidebar-list__item sidebar-list__user">
+                            <li class="sidebar-list__item sidebar-list__item--user">
                                 <p>Hi <c:out value="${sessionScope.user.name}!"/></p>
                                 <p><a href="user.jsp">Edit user</a> | <a href="user-servlet?logout">Logout</a></p>
                             </li>
@@ -59,7 +55,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                         </c:otherwise>
                     </c:choose>
                     <li class="sidebar-list__item">
-                        <a class="nav-item active">Home</a>
+                        <a class="nav-item active" href="index.jsp">Home</a>
+                    </li>
+                    <li class="sidebar-list__item">
+                        <a class="nav-item" href="categories.jsp">Categories</a>
+                    </li>
+                    <li class="sidebar-list__item">
+                        <a class="nav-item" href="articles.jsp">Articles</a>
                     </li>
                     <li class="sidebar-list__item">
                         <a class="nav-item" href="about.jsp">About</a>
@@ -67,24 +69,28 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                 </ul>
             </div>
             <div class="content">
-                <div class="content-main">
-                    <c:if test="${empty pageNumber}">
-                        <c:set var="pageNumber" scope="page" value="${1}"/>
-                    </c:if>
-                    <ul>
+                <div class="content__main">
+                    <h2 class="content-header">Recent Articles</h2>
+                    <ul class="article-list">
+                        <!-- Set how many articles to show -->
+                        <c:set var="show" scope="page" value="${3}"/>
                         <jsp:include page="/article-servlet">
-                            <jsp:param name="pageNumber" value="${pageNumber}"/>
-                            <jsp:param name="show" value="all"/>
-                            <jsp:param name="truncate" value="300"/>
+                            <jsp:param name="show" value="${pageScope.show}"/>
+                            <jsp:param name="truncate" value="500"/>
                         </jsp:include>
-                        <c:forEach var = "i" begin = "0" end = "3">
-                            <li><c:out value="${articles[i].getContent()}"/></li>
-                        </c:forEach>
 
+                        <c:forEach items="${requestScope.articles}" var = "article" begin = "0" end = "${pageScope.show - 1}">
+                            <li class="article-list__item article">
+                                <h3 class="article__title"><c:out value="${article.title}"/></h3>
+                                <p class="article__subtitle">In <a href="categories.jsp?id=<c:out value="${article.categoryId}"/>"><c:out value="${article.categoryName}"/></a> last edited on <fmt:formatDate type="date" value="${article.lastEditedDate}"/></p>
+                                <p class="article__body"><c:out value="${article.content}"/> <a href="articles.jsp?id=<c:out value="${article.categoryId}"/>">Read more >>></a> </p>
+                            </li>
+                        </c:forEach>
                     </ul>
                 </div>
-                <div class="content-footer">
-                    <p class="page-number"></p>
+                <div class="content__footer">
+                    <p class="copyright">Copyright © 2023 Alvin. This is a free software released under the <a href="https://www.gnu.org/licenses/agpl-3.0.en.html">GNU Affero General Public License v3.0.</a></p>
+                    <p class="disclaimer">All articles and categories are AI-generated. It is safe to assume that they are false.</p>
                 </div>
             </div>
         </div>

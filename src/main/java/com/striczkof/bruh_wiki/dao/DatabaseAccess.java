@@ -73,7 +73,7 @@ public class DatabaseAccess {
         }
     }
 
-    public boolean removePrepatedStatement(PS ps) {
+    public boolean removePreparedStatement(PS ps) {
         if (psArray != null && psArray.containsKey(ps)) {
             try {
                 psArray.get(ps).close();

@@ -17,7 +17,9 @@ div.main.main--big {
 /* Content container. This should take 80% of the width of the main container, and be floated to the right */
 div.content {
     float: right;
-    width: 80%;
+    width: calc(80% - 40px);
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 /* Sidebar for the main container */
@@ -68,6 +70,84 @@ ul.sidebar-list li.sidebar-list__item.sidebar-list__item--user p {
     text-decoration: none;
 }
 
+/* Content */
+div.content div.content__main {
+    width: 100%;
+}
+
+/* Footer */
+div.content div.content__footer {
+    width: 100%;
+}
+
+/* Page number */
+p.page-number, p.page-number a {
+    text-align: center;
+}
+
+p.page-number a {
+    text-decoration: none;
+    color: #0000ff;
+}
+
+div.content__footer p {
+    text-align: center;
+    color: #404040ff;
+}
+
+div.content__footer p a {
+    text-decoration: none;
+    color: #4040a4;
+}
+
+div.content__footer p.disclaimer {
+    font-style: italic;
+}
+
+/* Article stuff */
+ul.article-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+ul.article-list li.article-list__item {
+    margin: 0;
+    padding: 0;
+}
+
+.article h3.article__title {
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 0;
+}
+
+.article p.article__subtitle {
+    text-decoration: none;
+    font-style: italic;
+    color: #404040ff;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.article p.article__subtitle a {
+    text-decoration: none;
+    font-style: italic;
+    color: #4040a4;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.article p.article__content {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.article p.article__content a {
+    text-decoration: none;
+    color: #4040a4;
+}
+
 /* Small container */
 div.main.main--small {
     width: 25%;
@@ -82,6 +162,7 @@ form.login-register-form {
 
 ul.login-register-form-list {
     list-style-type: none;
+    text-align: center;
     padding: 0;
     margin: 0;
 }
@@ -118,6 +199,14 @@ form.login-register-form input {
     width: 90%;
 }
 
+button.login-register-form__button--big {
+    margin: 5px;
+    width: 90%;
+    font-weight: bold;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
 /* Login/Register result box, thicc border */
 div.result-box {
     border-width: 10px;
@@ -145,6 +234,11 @@ div.result-box.result-box--success {
 div.result-box.result-box--failure {
     border-color: #810000;
     background-color: #ff0400;
+}
+
+div.result-box.result-box--warn {
+    border-color: #404040;
+    background-color: #808080;
 }
 
 

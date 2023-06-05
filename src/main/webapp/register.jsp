@@ -27,7 +27,7 @@
             <h1 class="title-header">Bruh Wiki</h1>
         </div>
         <div class="main-content">
-            <form class="login-register-form" action="${pageContext.request.contextPath}/user-servlet" method="post">
+            <form class="login-register-form" id="register-form" action="${pageContext.request.contextPath}/user-servlet" method="post">
                 <!-- Temporary register -->
                 <ul class="login-register-form-list">
                     <li>
@@ -42,7 +42,7 @@
                     <li class="form-list-label">
                         <label for="password">Password (required)</label>
                     </li>
-                    <li class="form-list-input">
+                    <li class="form-list-input form-list-input--password">
                         <input type="password" name="password" id="password" placeholder="Password" required/>
                     </li>
                     <li class="form-list-label">
@@ -56,7 +56,7 @@
                         <input type="submit" name="register" value="Submit"/>
                     </li>
                     <li class="form-list-input">
-                        <p><a id="footer-back-link" href="index.jsp">Go back</a> | <a href="index.jsp">Home</a> | <a href="login.jsp">Login here</a></p>
+                        <p><a class="footer-back-link" href="index.jsp">Go back</a> | <a href="index.jsp">Home</a> | <a href="login.jsp">Login here</a></p>
                     </li>
                 </ul>
             </form>

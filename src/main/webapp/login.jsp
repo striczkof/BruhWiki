@@ -27,7 +27,7 @@
         <h1 class="title-header">Bruh Wiki</h1>
       </div>
       <div class="main-content">
-        <form class="login-register-form" action="${pageContext.request.contextPath}/user-servlet" method="post">
+        <form class="login-register-form" id="login-form" action="${pageContext.request.contextPath}/user-servlet" method="post">
           <!-- Temporary register -->
           <ul class="login-register-form-list">
             <li>
@@ -46,11 +46,11 @@
               <input type="password" name="password" id="password" placeholder="Password" required/>
             </li>
             <li class="form-list-input">
-              <!-- This is a cheap hack to let the post request know that this is a registration -->
+              <!-- This is a cheap hack to let the post request know that this is a login -->
               <input type="submit" name="login" value="Submit"/>
             </li>
             <li class="form-list-input">
-              <p><a id="footer-back-link" href="index.jsp">Go back</a> | <a href="index.jsp">Home</a> | <a href="register.jsp">Register here</a></p>
+              <p><a class="footer-back-link" href="index.jsp">Go back</a> | <a href="index.jsp">Home</a> | <a href="register.jsp">Register here</a></p>
             </li>
           </ul>
         </form>
