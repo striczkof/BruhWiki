@@ -9,9 +9,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ddd7e759-6044-47a8-a8e1-a3e869130efd" name="Changes" comment="Finished user section">
+    <list default="true" id="ddd7e759-6044-47a8-a8e1-a3e869130efd" name="Changes" comment="Finally! Completed work on articles/categories, starting work on admin portal">
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/index.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/index.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bruh_wiki.sql" beforeDir="false" afterPath="$PROJECT_DIR$/bruh_wiki.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/controller/ArticleServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/controller/ArticleServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/admin.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/admin.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/articles.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/articles.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/categories.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/categories.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/user.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/user.jsp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -196,8 +203,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.DatabaseTest" />
         <item itemvalue="Java Scratch.Scratch" />
+        <item itemvalue="JUnit.DatabaseTest" />
       </list>
     </recent_temporary>
   </component>
@@ -219,7 +226,7 @@
       <workItem from="1685757486659" duration="16882000" />
       <workItem from="1685786533271" duration="1373000" />
       <workItem from="1685788173714" duration="63895000" />
-      <workItem from="1685912544843" duration="32004000" />
+      <workItem from="1685912544843" duration="58606000" />
     </task>
     <task id="LOCAL-00001" summary="First commit">
       <created>1685788308518</created>
@@ -256,7 +263,21 @@
       <option name="project" value="LOCAL" />
       <updated>1685945430874</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Updated disclaimer lel">
+      <created>1685945581633</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1685945581633</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Added MariaDB SQL dump">
+      <created>1685956176127</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1685956176127</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -279,6 +300,9 @@
     <MESSAGE value="More work on index.jsp mostly" />
     <MESSAGE value="Redid the DAO, added some tests" />
     <MESSAGE value="Finished user section" />
-    <option name="LAST_COMMIT_MESSAGE" value="Finished user section" />
+    <MESSAGE value="Updated disclaimer lel" />
+    <MESSAGE value="Added MariaDB SQL dump" />
+    <MESSAGE value="Finally! Completed work on articles/categories, starting work on admin portal" />
+    <option name="LAST_COMMIT_MESSAGE" value="Finally! Completed work on articles/categories, starting work on admin portal" />
   </component>
 </project>

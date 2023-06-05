@@ -10,13 +10,13 @@
 <!DOCTYPE html>
 <html>
   <!-- get session and user if exists -->
-  <c:set var="name" scope="page" value="${sessionScope.user.name}"/>
   <c:if test="${empty sessionScope.user}">
     <c:if test="${param.change ne 'delete' and param.result ne 'success'}">
       <jsp:forward page="login.jsp"/>
     </c:if>
     <c:set var="name" scope="page" value="(deleted)"/>
   </c:if>
+  <c:set var="name" scope="page" value="${sessionScope.user.name}"/>
   <head>
     <meta charset="UTF-8"/>
     <title>Bruh Wiki - <c:out value="${pageScope.name}"/></title>

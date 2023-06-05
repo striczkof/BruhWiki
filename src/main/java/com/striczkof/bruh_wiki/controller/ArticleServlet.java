@@ -16,6 +16,7 @@ import java.sql.SQLException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -101,8 +102,8 @@ public class ArticleServlet extends HttpServlet {
         } catch (SQLException e) {
             log.severe("The servlet " + getServletName() + " has had a bruh moment.");
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     private Article[] getArticles(int truncate, int limit, int starts) {
@@ -304,7 +305,10 @@ public class ArticleServlet extends HttpServlet {
     }
 
     private int countArticlesByCat(int catId) {
-        try (ResultSet out = dao.getPreparedStatement(PS.ART_GET_COUNT_BY_CAT).executeQuery()) {
+        try {
+            PreparedStatement ps = dao.getPreparedStatement(PS.ART_GET_COUNT_BY_CAT);
+            ps.setInt(1, catId);
+            ResultSet out = ps.executeQuery();
             if (out.next()) {
                 return out.getInt("count");
             } else {
@@ -338,7 +342,97 @@ public class ArticleServlet extends HttpServlet {
      * to pass variables back into the included servlet.
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if(request.getParameter("show") != null) {
+        if (request.getParameter("categoryId") != null) {
+            try {
+                int catId = Integer.parseInt(request.getParameter("categoryId"));
+                int show = Integer.parseInt(request.getParameter("show"));
+                int page = Integer.parseInt(request.getParameter("page"));
+                int truncate = 0;
+                if (request.getParameter("truncate") != null) {
+                    try {
+                        truncate = Integer.parseInt(request.getParameter("truncate"));
+                    } catch (NumberFormatException e) {
+                        log.warning("The servlet " + getServletName() + " has received a GET but the 'truncate' parameter is not a number.");
+                    }
+                }
+                // Check if category even exists
+                Category cat = getCategory(catId);
+                if (cat != null) {
+                    // Show articles
+                    int maxPage = Math.floorDiv(countArticlesByCat(catId), show) + 1;
+                    Article[] articles = getArticlesByCat(truncate, catId, show, (page * show) - (show - 1));
+                    if (articles != null && articles.length > 0) {
+                        request.setAttribute("category", cat);
+                        request.setAttribute("maxPage", maxPage);
+                        request.setAttribute("articles", articles);
+                        return;
+                    } else {
+                        request.setAttribute("category", cat);
+                        request.setAttribute("maxPage", maxPage);
+                        return;
+                    }
+                } else {
+                    log.warning("The servlet " + getServletName() + " has received a GET but the 'categoryId' parameter is not a valid category.");
+                }
+            } catch (NumberFormatException e) {
+                log.warning("The servlet " + getServletName() + " has received a GET but the 'categoryId' and/or 'show' parameter are not numbers.");
+                return;
+            }
+        } else if (request.getParameter("showCategories") != null) {
+            // Don't care, as long as it exists
+            // Show and page are kinda mandatory at this point
+            try {
+                int show = Integer.parseInt(request.getParameter("show"));
+                int page = Integer.parseInt(request.getParameter("page"));
+                // Ok fuck it, 50 gorillion SQL queries in one call
+                // 1. Get all cats, 2. Count cats, 3. Split them in pages, 4. Fetch article count, 5, Get most recent article, 6. ??? 6, Profit
+                Category[] cats = getCategories();
+                if (cats != null) {
+                    int catCount = countCategories();
+                    // Do the wucky fucky calculation stuff
+                    int maxPage = Math.floorDiv(catCount, show) + 1;
+                    int limit = page * show;
+                    if (limit > catCount) {
+                        limit = catCount;
+                    }
+                    // limit not go over cat count, if cat count g
+                    // I could make a check for the start index but meh
+                    Category[] catsPage = Arrays.copyOfRange(cats, ((show * page)  - show), limit);
+                    int[] artCounts = new int[catsPage.length];
+                    Article[] recentArticles = new Article[cats.length];
+                    for (int i = 0; i < catsPage.length; i++) {
+                        artCounts[i] = countArticlesByCat(catsPage[i].getId());
+                        // Truncating takes too much time lel
+                        Article[] recentArticle =  getArticlesByCat(0, catsPage[i].getId(), 1, 1);
+                        if (recentArticle == null) {
+                            // Bruh it suffered a stronk
+                            request.setAttribute("maxPage", 1);
+                            request.setAttribute("articles", null);
+                            return;
+                        } else {
+                            if (recentArticle.length > 0) {
+                                recentArticles[i] = recentArticle[0];
+                            } else {
+                                recentArticles[i] = null;
+                            }
+                        }
+                    }
+                    request.setAttribute("maxShow", catsPage.length - 1);
+                    request.setAttribute("catCount", catCount);
+                    request.setAttribute("maxPage", maxPage);
+                    // Indexes must be matching
+                    request.setAttribute("categories", catsPage);
+                    request.setAttribute("articleCounts", artCounts);
+                    request.setAttribute("recentArticles", recentArticles);
+                } else {
+                    // Boo
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                return;
+            }
+            return;
+        } if (request.getParameter("show") != null) {
             int truncate = 0;
             if (request.getParameter("truncate") != null) {
                 try {
@@ -450,45 +544,6 @@ public class ArticleServlet extends HttpServlet {
                 log.warning("The servlet " + getServletName() + " has received a GET but the 'articleId' parameter is not a number.");
                 return;
             }
-        } else if (request.getParameter("categoryId") != null) {
-            try {
-                int catId = Integer.parseInt(request.getParameter("categoryId"));
-                int show = Integer.parseInt(request.getParameter("show"));
-                int page = Integer.parseInt(request.getParameter("page"));
-                int truncate = 0;
-                if (request.getParameter("truncate") != null) {
-                    try {
-                        truncate = Integer.parseInt(request.getParameter("truncate"));
-                    } catch (NumberFormatException e) {
-                        log.warning("The servlet " + getServletName() + " has received a GET but the 'truncate' parameter is not a number.");
-                    }
-                }
-                // Check if category even exists
-                Category cat = getCategory(catId);
-                if (cat != null) {
-                    // Show articles
-                    int maxPage = Math.floorDiv(countArticles(), show) + 1;
-                    Article[] articles = getArticlesByCat(truncate, catId, show, (page * show) - (show - 1));
-                    if (articles != null && articles.length > 0) {
-                        request.setAttribute("maxPage", maxPage);
-                        request.setAttribute("articles", articles);
-                        return;
-                    } else {
-                        request.setAttribute("maxPage", maxPage);
-                        log.warning("The servlet " + getServletName() + " has received a GET but no article has been returned.");
-                        return;
-                    }
-                } else {
-                    log.warning("The servlet " + getServletName() + " has received a GET but the 'categoryId' parameter is not a valid category.");
-                }
-            } catch (NumberFormatException e) {
-                log.warning("The servlet " + getServletName() + " has received a GET but the 'categoryId' and/or 'show' parameter are not numbers.");
-                return;
-            }
-        } else if (request.getParameter("showCategories") != null) {
-            // Don't care, as long as it exists
-            request.setAttribute("categories", getCategories());
-            return;
         } else {
             log.warning("The servlet " + getServletName() + " has received a GET but hit none of the ifs for some funny reason.");
         }

@@ -122,6 +122,14 @@ ul.article-list li.article-list__item {
     margin-bottom: 0;
 }
 
+/* Actually category title lol */
+.article h4.article__title, h4 a {
+    text-decoration: none;
+    font-style: italic;
+    color: #4040a4;
+    margin-bottom: 5px;
+}
+
 .article p.article__subtitle {
     text-decoration: none;
     font-style: italic;

@@ -83,7 +83,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                             <li class="article-list__item article">
                                 <h3 class="article__title"><c:out value="${article.title}"/></h3>
                                 <p class="article__subtitle">In <a href="categories.jsp?id=<c:out value="${article.categoryId}"/>"><c:out value="${article.categoryName}"/></a> last edited on <fmt:formatDate type="date" value="${article.lastEditedDate}"/></p>
-                                <p class="article__body"><c:out value="${article.content}"/> <a href="articles.jsp?id=<c:out value="${article.categoryId}"/>">Read more >>></a> </p>
+                                <p class="article__body"><c:out value="${article.content}"/> <a href="articles.jsp?id=<c:out value="${article.id}"/>">Read more >>></a> </p>
                             </li>
                         </c:forEach>
                     </ul>

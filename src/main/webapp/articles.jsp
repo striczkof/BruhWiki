@@ -137,6 +137,9 @@
           <c:if test="${not empty param.search}">
             <c:set var="searchParam" scope="page" value="&search=${param.search}"/>
           </c:if>
+          <c:if test="${not empty param.show}">
+            <c:set var="show" scope="page" value="&show=${param.show}"/>
+          </c:if>
           <c:if test="${empty param.id}">
             <c:choose>
               <c:when test="${pageScope.page == 1 and pageScope.maxPage == 1}">
@@ -146,7 +149,7 @@
                 <p class="page-number"><< < 1 <a href="articles.jsp?page=2${pageScope.searchParam}">></a> <a href="articles.jsp?page=${requestScope.maxPage}${pageScope.searchParam}">>></a></p>
               </c:when>
               <c:when test="${pageScope.page == requestScope.maxPage}">
-                <p class="page-number"><a href="articles.jsp?page=1${pageScope.searchParam}"><<</a> <a href="articles.jsp?page=${pageScope.page - 1}${pageScope.searchParam}"><</a> ${pageScope.page} >></p>
+                <p class="page-number"><a href="articles.jsp?page=1${pageScope.searchParam}"><<</a> <a href="articles.jsp?page=${pageScope.page - 1}${pageScope.searchParam}"><</a> ${pageScope.page} > >></p>
               </c:when>
               <c:otherwise>
                 <p class="page-number"><a href="articles.jsp?page=1${pageScope.searchParam}"><<</a> <a href="articles.jsp?page=${pageScope.page - 1}${pageScope.searchParam}"><</a> ${pageScope.page} <a href="articles.jsp?page=${pageScope.page + 1}${pageScope.searchParam}">></a> <a href="articles.jsp?page=${requestScope.maxPage}${pageScope.searchParam}">>></a></p>
@@ -154,7 +157,7 @@
             </c:choose>
           </c:if>
           <p class="copyright">Copyright © 2023 Alvin. This is a free software released under the <a href="https://www.gnu.org/licenses/agpl-3.0.en.html">GNU Affero General Public License v3.0.</a></p>
-          <p class="disclaimer"><small>All articles and categories are AI-generated. It is safe to assume that they are false.</small></p>
+          <p class="disclaimer">All articles and categories are AI-generated. It is safe to assume that they are false. <br/> All source code is contained in <a href="https://github.com/striczkof/BruhWiki">this GitHub repository</a>.</p>
         </div>
       </div>
     </div>
