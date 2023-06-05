@@ -90,7 +90,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                 </div>
                 <div class="content__footer">
                     <p class="copyright">Copyright © 2023 Alvin. This is a free software released under the <a href="https://www.gnu.org/licenses/agpl-3.0.en.html">GNU Affero General Public License v3.0.</a></p>
-                    <p class="disclaimer">All articles and categories are AI-generated. It is safe to assume that they are false.</p>
+                    <p class="disclaimer">All articles and categories are AI-generated. It is safe to assume that they are false. <br/> All source code is contained in <a href="https://github.com/striczkof/BruhWiki">this GitHub repository</a>.</p>
                 </div>
             </div>
         </div>

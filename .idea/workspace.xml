@@ -9,26 +9,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ddd7e759-6044-47a8-a8e1-a3e869130efd" name="Changes" comment="Redid the DAO, added some tests">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/model/Category.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/categories.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+    <list default="true" id="ddd7e759-6044-47a8-a8e1-a3e869130efd" name="Changes" comment="Finished user section">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/controller/AdminServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/controller/AdminServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/controller/ArticleServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/controller/ArticleServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/controller/UserServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/controller/UserServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/dao/DatabaseAccess.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/dao/DatabaseAccess.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/dao/PS.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/dao/PS.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/dao/SQLStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/dao/SQLStatement.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/model/Article.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/model/Article.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/article.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/about.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/articles.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/articles.jsp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/webapp/index.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/index.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/js/login-register.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/js/login-register.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/login.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/login.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/register.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/register.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/user.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/user.jsp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -236,7 +219,7 @@
       <workItem from="1685757486659" duration="16882000" />
       <workItem from="1685786533271" duration="1373000" />
       <workItem from="1685788173714" duration="63895000" />
-      <workItem from="1685912544843" duration="31750000" />
+      <workItem from="1685912544843" duration="32004000" />
     </task>
     <task id="LOCAL-00001" summary="First commit">
       <created>1685788308518</created>
@@ -266,7 +249,14 @@
       <option name="project" value="LOCAL" />
       <updated>1685863544775</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Finished user section">
+      <created>1685945430873</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1685945430874</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -288,6 +278,7 @@
     <MESSAGE value="Renamed stuff, plus some work on index.jsp" />
     <MESSAGE value="More work on index.jsp mostly" />
     <MESSAGE value="Redid the DAO, added some tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="Redid the DAO, added some tests" />
+    <MESSAGE value="Finished user section" />
+    <option name="LAST_COMMIT_MESSAGE" value="Finished user section" />
   </component>
 </project>
