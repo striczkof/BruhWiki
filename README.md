@@ -11,3 +11,14 @@ Learned the most important lesson in my life: **NEVER** use JSP for web developm
 - Web Server: Apache Tomcat 10.1.9
 - Database: MariaDB 10.11.3
 - IDE: IntelliJ IDEA 2023.1.2 (Ultimate Edition)
+
+## How to login
+- Administrator (has admin access) (details in the e-mail, will be shown here before archiving this repo)
+  - Username: (redacted) 
+  - Password: (redacted)
+- User
+  - Username: user
+  - Password: user123
+- (no name)
+  - Username: noname
+  - Password: noname123

@@ -3,6 +3,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
          version="6.0">
+    <!-- Wiki name -->
+    <display-name>Dynamic Bruh Wiki</display-name>
     <!--Global variables go brr-->
     <context-param>
         <param-name>db-url</param-name>

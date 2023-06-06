@@ -11,7 +11,13 @@ div.main {
 
 div.main.main--big {
     width: 80%;
-    min-width: 360px;
+    min-width: 800px;
+}
+
+/* Small container */
+div.main.main--small {
+    width: 25%;
+    min-width: 400px;
 }
 
 /* Content container. This should take 80% of the width of the main container, and be floated to the right */
@@ -154,12 +160,6 @@ ul.article-list li.article-list__item {
 .article p.article__content a {
     text-decoration: none;
     color: #4040a4;
-}
-
-/* Small container */
-div.main.main--small {
-    width: 25%;
-    min-width: 120px;
 }
 
 /* Login/register form */

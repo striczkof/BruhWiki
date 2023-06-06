@@ -11,7 +11,7 @@
 <html>
     <head>
         <meta charset="UTF-8"/>
-        <title>Bruh Wiki - Register</title>
+        <title>Register - <c:out value="${pageContext.servletContext.servletContextName}"/></title>
         <link rel="stylesheet" href="styles.css" type="text/css"/>
         <script src="js/login-register.js" type="application/javascript"></script>
     </head>
@@ -24,7 +24,7 @@
     </c:if>
     <div class="main main--small">
         <div class="title">
-            <h1 class="title-header">Bruh Wiki</h1>
+            <h1 class="title-header"><c:out value="${pageContext.servletContext.servletContextName}"/></h1>
         </div>
         <div class="main-content">
             <form class="login-register-form" id="register-form" action="${pageContext.request.contextPath}/user-servlet" method="post">
@@ -65,8 +65,14 @@
                 <c:choose>
                     <c:when test="${param.result eq 'success'}">
                         <div class="result-box result-box--success">
-                            <p>Registration successful! You are now logged in!</p>
+                            <p>Hi ${sessionScope.user.name}! You are now registered and logged in!</p>
                             <p>Redirecting to the <a href="index.jsp">index page</a> in 5 seconds...</p>
+                        </div>
+                    </c:when>
+                    <c:when test="${param.result eq 'already-logged-in'}">
+                        <div class="result-box result-box--warn">
+                            <p>Hi ${sessionScope.user.name}! You are already logged in.</p>
+                            <p>Either a user error or something happened in the backend.</p>
                         </div>
                     </c:when>
                     <c:when test="${param.result eq 'user-exists'}">

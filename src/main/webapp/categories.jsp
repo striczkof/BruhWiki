@@ -59,13 +59,13 @@
     <c:set var="maxPage" scope="page" value="${requestScope.maxPage}"/>
     <head>
         <meta charset="UTF-8"/>
-        <title>Bruh Wiki - <c:out value="${title}"/></title>
+        <title><c:out value="${title}"/> - <c:out value="${pageContext.servletContext.servletContextName}"/></title>
         <link rel="stylesheet" href="styles.css" type="text/css">
     </head>
     <body>
         <div class="main main--big">
             <div class="title">
-                <h1 class="title-header">Bruh Wiki</h1>
+                <h1 class="title-header"><c:out value="${pageContext.servletContext.servletContextName}"/></h1>
             </div>
             <div class="sidebar">
                 <ul class="sidebar-list">

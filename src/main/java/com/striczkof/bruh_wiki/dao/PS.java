@@ -200,6 +200,16 @@ public enum PS {
     ART_GET_SOME_BY_MATCHING,
 
     /**
+     * @see SQLStatement#ART_ADMIN_GET_COUNT_HIDDEN
+     */
+    ART_ADMIN_GET_COUNT_HIDDEN,
+
+    /**
+     * @see SQLStatement#ART_ADMIN_GET_COUNT_HIDDEN_BY_CAT
+     */
+    ART_ADMIN_GET_COUNT_HIDDEN_BY_CAT,
+
+    /**
      * @see SQLStatement#ART_ADMIN_GET_ONE_HIDDEN
      */
     ART_ADMIN_GET_ONE_HIDDEN,

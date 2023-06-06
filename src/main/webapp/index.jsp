@@ -22,13 +22,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 <html>
     <head>
         <meta charset="UTF-8"/>
-        <title>Bruh Wiki</title>
+        <title>Home - <c:out value="${pageContext.servletContext.servletContextName}"/></title>
         <link rel="stylesheet" href="styles.css" type="text/css">
     </head>
     <body>
         <div class="main main--big">
             <div class="title">
-                <h1 class="title-header">Bruh Wiki</h1>
+                <h1 class="title-header"><c:out value="${pageContext.servletContext.servletContextName}"/></h1>
             </div>
             <div class="sidebar">
                 <ul class="sidebar-list">

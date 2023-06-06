@@ -338,8 +338,9 @@ public class ArticleServlet extends HttpServlet {
     }
 
     /**
-     * Look, using request parameters is a funny way to do this, but I'm not sure if there is any other way
-     * to pass variables back into the included servlet.
+     * doGet method for the servlet. Handles GET requests.
+     * This is supposed to be called in the JSP through <jsp:include page"/article-servlet" />.
+     * So this won't redirect but instead the variables are included in the request parameters.
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (request.getParameter("categoryId") != null) {

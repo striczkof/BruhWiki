@@ -19,14 +19,14 @@
   <c:set var="name" scope="page" value="${sessionScope.user.name}"/>
   <head>
     <meta charset="UTF-8"/>
-    <title>Bruh Wiki - <c:out value="${pageScope.name}"/></title>
+    <title><c:out value="${pageScope.name}"/> - <c:out value="${pageContext.servletContext.servletContextName}"/></title>
     <link rel="stylesheet" href="styles.css" type="text/css"/>
     <script src="js/login-register.js" type="application/javascript"></script>
   </head>
   <body>
     <div class="main main--small">
       <div class="title">
-        <h1 class="title-header">Bruh Wiki</h1>
+        <h1 class="title-header"><c:out value="${pageContext.servletContext.servletContextName}"/></h1>
       </div>
       <div class="main-content">
         <c:choose>

@@ -17,7 +17,7 @@
   </c:if>
   <head>
     <meta charset="UTF-8"/>
-    <title>Bruh Wiki - Login</title>
+    <title>Login - <c:out value="${pageContext.servletContext.servletContextName}"/></title>
     <link rel="stylesheet" href="styles.css" type="text/css"/>
     <script src="js/login-register.js" type="application/javascript"></script>
   </head>
@@ -59,8 +59,14 @@
           <c:choose>
             <c:when test="${param.result eq 'success'}">
               <div class="result-box result-box--success">
-                <p>You are now logged in!</p>
+                <p>Hi ${sessionScope.user.name}! You are now logged in!</p>
                 <p>Redirecting to the <a href="index.jsp">index page</a> in 5 seconds...</p>
+              </div>
+            </c:when>
+            <c:when test="${param.result eq 'already-logged-in'}">
+              <div class="result-box result-box--warn">
+                <p>Hi ${sessionScope.user.name}! You are already logged in.</p>
+                <p>Either a user error or something happened in the backend.</p>
               </div>
             </c:when>
             <c:when test="${param.result eq 'user-not-found'}">

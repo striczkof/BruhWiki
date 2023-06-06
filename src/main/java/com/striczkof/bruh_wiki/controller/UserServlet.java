@@ -39,7 +39,6 @@ public class UserServlet extends HttpServlet {
         hashAlgorithm = getServletContext().getInitParameter("hashing-algorithm");
         // SQL statements for the prepared statements
         PS[] ps = new PS[]{
-                PS.USERS_GET_COUNT,
                 PS.USERS_GET_ALL,
                 PS.USERS_GET_ONE,
                 PS.USERS_GET_ID_ONE_BY_UNAME,
@@ -312,15 +311,6 @@ public class UserServlet extends HttpServlet {
     }
 
     /**
-     * Look for users by their username
-     * @param username username to match
-     * @return array of matching users
-     */
-    private User[] searchUsers(String username) {
-        return null;
-    }
-
-    /**
      * Generates a hash from the password and salt
      * @param password password string
      * @param salt bytes of salt
@@ -379,7 +369,8 @@ public class UserServlet extends HttpServlet {
 
     /**
      * doGet for quick stuff
-     * Handles logout
+     * It's only purpose is to handle logout
+     * It is called by href="user-servlet?logout"
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -468,6 +459,7 @@ public class UserServlet extends HttpServlet {
                     if (session.getAttribute("user") != null) {
                         // My god you are already logged in you should not even be here
                         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        response.sendRedirect(fixURL(referer, "result=already-logged-in"));
                         return;
                     } else {
                         // Not logged in, good
