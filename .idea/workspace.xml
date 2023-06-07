@@ -2,20 +2,28 @@
 <project version="4">
   <component name="ArtifactsWorkspaceSettings">
     <artifacts-to-build>
-      <artifact name="BruhWiki:war exploded" />
+      <artifact name="BruhWiki:Deployment" />
     </artifacts-to-build>
   </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ddd7e759-6044-47a8-a8e1-a3e869130efd" name="Changes" comment="Finally done on article/category stuff, starting work on admin panel">
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/js/admin.js" afterDir="false" />
+    <list default="true" id="ddd7e759-6044-47a8-a8e1-a3e869130efd" name="Changes" comment="Some work on admin servlet, Made the wiki name dynamic">
+      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/artifacts/BruhWiki_Deployment.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/webContexts.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/webServers.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bruh_wiki.sql" beforeDir="false" afterPath="$PROJECT_DIR$/mariadb-dump.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/controller/AdminServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/controller/AdminServlet.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/controller/ArticleServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/controller/ArticleServlet.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/controller/UserServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/controller/UserServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/dao/DatabaseAccess.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/dao/DatabaseAccess.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/dao/PS.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/dao/PS.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/dao/SQLStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/dao/SQLStatement.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" afterDir="false" />
@@ -23,9 +31,6 @@
       <change beforePath="$PROJECT_DIR$/src/main/webapp/admin.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/admin.jsp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/webapp/articles.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/articles.jsp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/webapp/categories.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/categories.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/index.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/index.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/login.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/login.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/register.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/register.jsp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/webapp/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/styles.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/webapp/test.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/test.jsp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/webapp/user.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/user.jsp" afterDir="false" />
@@ -75,12 +80,13 @@
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;last_directory_selection&quot;: &quot;/home/striczkof/IdeaProjects/BruhWiki/src/test/java&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/striczkof/IdeaProjects/BruhWiki&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/striczkof/IdeaProjects/BruhWiki/target/BruhWiki-1.0-SNAPSHOT/META-INF/MANIFEST.MF&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Artifacts&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
@@ -121,10 +127,11 @@
     </configuration>
     <configuration name="Tomcat 10.1.9" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 10.1.9" ALTERNATIVE_JRE_ENABLED="false">
       <option name="OPEN_IN_BROWSER" value="false" />
+      <option name="UPDATING_POLICY" value="restart-server" />
       <deployment>
-        <artifact name="BruhWiki:war exploded">
+        <artifact name="BruhWiki:Deployment">
           <settings>
-            <option name="CONTEXT_PATH" value="" />
+            <option name="CONTEXT_PATH" value="/" />
           </settings>
         </artifact>
       </deployment>
@@ -202,7 +209,79 @@
       <method v="2">
         <option name="Make" enabled="true" />
         <option name="BuildArtifacts" enabled="true">
-          <artifact name="BruhWiki:war exploded" />
+          <artifact name="BruhWiki:Deployment" />
+        </option>
+      </method>
+    </configuration>
+    <configuration name="bruh-wiki.striczkof.io" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Remote" APPLICATION_SERVER_NAME="Tomcat 9.0.62" ALTERNATIVE_JRE_ENABLED="false">
+      <option name="HOST" value="bruh-wiki.striczkof.io" />
+      <option name="PORT" value="22" />
+      <option name="LOCAL" value="false" />
+      <option name="OPEN_IN_BROWSER_URL" value="https://bruh-wiki.striczkof.io:443" />
+      <option name="UPDATING_POLICY" value="redeploy-artifacts" />
+      <deployment>
+        <artifact name="BruhWiki:Deployment">
+          <settings>
+            <option name="CONTEXT_PATH" value="" />
+          </settings>
+        </artifact>
+      </deployment>
+      <server-settings>
+        <data>
+          <option name="targets">
+            <list>
+              <WatchedTargetModelImpl>
+                <option name="name" value="CONTEXT_XML" />
+                <option name="transportStagingTarget">
+                  <TransportTarget>
+                    <option name="id" value="df5e6f03-8153-4dc6-9920-bb603ce2c1ea" />
+                    <id>df5e6f03-8153-4dc6-9920-bb603ce2c1ea</id>
+                  </TransportTarget>
+                </option>
+                <option name="watchedLocalPath" value="" />
+                <watched-path />
+                <name>CONTEXT_XML</name>
+                <transport-target>
+                  <TransportTarget>
+                    <option name="id" value="df5e6f03-8153-4dc6-9920-bb603ce2c1ea" />
+                    <id>df5e6f03-8153-4dc6-9920-bb603ce2c1ea</id>
+                  </TransportTarget>
+                </transport-target>
+              </WatchedTargetModelImpl>
+              <StagingTargetModelImpl>
+                <option name="name" value="STAGING" />
+                <option name="stagingRemotePath" value="/" />
+                <option name="transportStagingTarget">
+                  <TransportTarget>
+                    <option name="id" value="061cea96-d310-4d3c-bb20-9b745b5a789d" />
+                    <id>061cea96-d310-4d3c-bb20-9b745b5a789d</id>
+                  </TransportTarget>
+                </option>
+                <staging-path>/</staging-path>
+                <name>STAGING</name>
+                <transport-target>
+                  <TransportTarget>
+                    <option name="id" value="061cea96-d310-4d3c-bb20-9b745b5a789d" />
+                    <id>061cea96-d310-4d3c-bb20-9b745b5a789d</id>
+                  </TransportTarget>
+                </transport-target>
+              </StagingTargetModelImpl>
+            </list>
+          </option>
+          <option name="transportHostId" value="18d96458-b58e-496e-99b0-970461b9858c" />
+          <host-id>18d96458-b58e-496e-99b0-970461b9858c</host-id>
+        </data>
+      </server-settings>
+      <predefined_log_file enabled="true" id="Tomcat" />
+      <predefined_log_file enabled="true" id="TOMCAT_LOCALHOST_LOG_ID" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="44387" />
+        <option name="LOCAL" value="false" />
+      </RunnerSettings>
+      <method v="2">
+        <option name="Make" enabled="true" />
+        <option name="BuildArtifacts" enabled="true">
+          <artifact name="BruhWiki:Deployment" />
         </option>
       </method>
     </configuration>
@@ -210,6 +289,7 @@
       <item itemvalue="Java Scratch.Scratch" />
       <item itemvalue="JUnit.DatabaseTest" />
       <item itemvalue="Tomcat Server.Tomcat 10.1.9" />
+      <item itemvalue="Tomcat Server.bruh-wiki.striczkof.io" />
     </list>
     <recent_temporary>
       <list>
@@ -236,7 +316,9 @@
       <workItem from="1685757486659" duration="16882000" />
       <workItem from="1685786533271" duration="1373000" />
       <workItem from="1685788173714" duration="63895000" />
-      <workItem from="1685912544843" duration="74200000" />
+      <workItem from="1685912544843" duration="119344000" />
+      <workItem from="1686122943113" duration="106000" />
+      <workItem from="1686123057456" duration="15380000" />
     </task>
     <task id="LOCAL-00001" summary="First commit">
       <created>1685788308518</created>
@@ -294,7 +376,14 @@
       <option name="project" value="LOCAL" />
       <updated>1686011551669</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Some work on admin servlet, Made the wiki name dynamic">
+      <created>1686028090294</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1686028090294</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -321,6 +410,7 @@
     <MESSAGE value="Added MariaDB SQL dump" />
     <MESSAGE value="Finally! Completed work on articles/categories, starting work on admin portal" />
     <MESSAGE value="Finally done on article/category stuff, starting work on admin panel" />
-    <option name="LAST_COMMIT_MESSAGE" value="Finally done on article/category stuff, starting work on admin panel" />
+    <MESSAGE value="Some work on admin servlet, Made the wiki name dynamic" />
+    <option name="LAST_COMMIT_MESSAGE" value="Some work on admin servlet, Made the wiki name dynamic" />
   </component>
 </project>

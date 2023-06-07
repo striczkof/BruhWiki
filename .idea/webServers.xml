@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="18d96458-b58e-496e-99b0-970461b9858c" name="EC2" url="https://bruh-wiki.striczkof.io/">
+        <fileTransfer rootFolder="/home/ec2-user" accessType="SFTP" host="3.25.93.106" port="22" sshConfigId="742561fe-1841-429f-9f46-8e8881100685" sshConfig="ec2-user@3.25.93.106:22 key" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" isUseRsync="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

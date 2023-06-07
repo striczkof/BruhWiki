@@ -459,15 +459,17 @@ public class ArticleServlet extends HttpServlet {
                     log.warning("The servlet " + getServletName() + " has received a GET but the 'show' or 'page' parameter is not a number.");
                     // Keep going with whatever values we have
                 }
-                int maxPage = Math.floorDiv(countSearchArticles(search), show) + 1;
+                int resultCount = countSearchArticles(search);
+                int maxPage = Math.floorDiv(resultCount, show) + 1;
                 Article[] articles = searchArticles(truncate, search, show, (page * show) - (show - 1));
                 if (articles != null && articles.length > 0) {
+                    request.setAttribute("resultCount", resultCount);
                     request.setAttribute("maxPage", maxPage);
                     request.setAttribute("articles", articles);
                     return;
                 } else {
+                    request.setAttribute("resultCount", resultCount);
                     request.setAttribute("maxPage", maxPage);
-                    log.warning("The servlet " + getServletName() + " has received a GET but no article has been returned.");
                     return;
                 }
             } else if (request.getParameter("show").equals("all")) {

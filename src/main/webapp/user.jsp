@@ -139,7 +139,7 @@
                 <button class="login-register-form__button--big" type="submit" form="hidden-form" formtarget="user.jsp" name="change" value="name" formmethod="get">Change username and/or name</button>
               </li>
               <li class="form-list-input">
-                <button class="login-register-form__button--big" type="submit" form="hidden-form" formtarget="user.jsp" name="change" value="pass" formmethod="get">Chane password</button>
+                <button class="login-register-form__button--big" type="submit" form="hidden-form" formtarget="user.jsp" name="change" value="pass" formmethod="get">Change password</button>
               </li>
               <li class="form-list-input">
                 <button class="login-register-form__button--big" type="submit" form="hidden-form" formtarget="user.jsp" name="change" value="delete" formmethod="get">Delete account</button>

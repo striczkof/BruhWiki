@@ -91,6 +91,7 @@ public class DatabaseAccess {
     }
 
     public PreparedStatement getPreparedStatement(PS ps) {
+        log.info(ps.name() + " accsesed by " + servletName + "."); // Cooment out in production or you'll get spammed
         return this.psArray.get(ps);
     }
 }

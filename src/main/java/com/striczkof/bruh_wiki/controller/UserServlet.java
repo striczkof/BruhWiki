@@ -417,6 +417,9 @@ public class UserServlet extends HttpServlet {
                 if (referer.contains("user.jsp")) {
                     referer = referer.replace("user.jsp", "login.jsp");
                 }
+                if (referer.contains("admin.jsp")) {
+                    referer = referer.replace("admin.jsp", "login.jsp");
+                }
                 if (referer.contains("login.jsp")) {
                     // Logs in
                     if (session.getAttribute("user") != null) {

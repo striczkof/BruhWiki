@@ -23,7 +23,7 @@
     <c:choose>
         <c:when test="${empty param.show or param.page <= 0}">
             <!-- Enter default page values here -->
-            <c:set var="show" scope="page" value="${15}"/>
+            <c:set var="show" scope="page" value="${10}"/>
         </c:when>
         <c:otherwise>
             <c:set var="show" scope="page" value="${param.show}"/>
@@ -128,14 +128,14 @@
                             <!-- Must be included before -->
                             <ul class="article-list">
                                 <c:forEach var = "i" begin="0" end="${requestScope.maxShow}">
-                                    <li class="article-list__item article">
+                                    <li class="article-list__item--small article ">
                                         <h4 class="article__title"><a href="categories.jsp?id=${requestScope.categories[i].id}"><c:out value="${requestScope.categories[i].name}"/></a></h4>
                                         <c:choose>
                                             <c:when test="${requestScope.articleCounts[i] eq 0}">
                                                 <p class="article__subtitle">Has no articles</p>
                                             </c:when>
                                             <c:otherwise>
-                                                <p class="article__subtitle">Has: ${requestScope.articleCounts[i]} latest article: <a href="articles.jsp?id=${requestScope.recentArticles[i].id}">${requestScope.recentArticles[i].title}</a></p>
+                                                <p class="article__subtitle">Has: ${requestScope.articleCounts[i]}, latest article: <a href="articles.jsp?id=${requestScope.recentArticles[i].id}">${requestScope.recentArticles[i].title}</a></p>
                                             </c:otherwise>
                                         </c:choose>
                                     </li>

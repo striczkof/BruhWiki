@@ -6,7 +6,7 @@
 
     <groupId>com.striczkof</groupId>
     <artifactId>BruhWiki</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.9-PRE-RELEASE</version>
     <name>BruhWiki</name>
     <packaging>war</packaging>
 

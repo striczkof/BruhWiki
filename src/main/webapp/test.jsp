@@ -11,6 +11,6 @@
     <title><c:out value="${pageContext.servletContext.servletContextName}"/></title>
 </head>
 <body>
-
+${not empty param.page ? 'page='.concat(param.page.toString().concat('&')) : ''}
 </body>
 </html>

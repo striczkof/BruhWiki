@@ -17,6 +17,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 @WebServlet(name = "AdminServlet", value = "/admin-servlet")
@@ -35,6 +37,7 @@ public class AdminServlet extends HttpServlet {
                 PS.USERS_GET_ADMIN_ONE,
                 PS.USERS_GET_COUNT,
                 PS.ART_GET_COUNT,
+                PS.ART_GET_COUNT_BY_CAT,
                 PS.CAT_GET_COUNT,
                 PS.USERS_GET_ALL,
                 PS.CAT_GET_ALL,
@@ -66,6 +69,7 @@ public class AdminServlet extends HttpServlet {
                 PS.ART_GET_SOME_BY_MATCHING,
                 PS.ART_GET_COUNT_BY_MATCHING,
 
+                PS.ART_ADMIN_MAKE_ONE,
                 PS.ART_ADMIN_GET_ALL,
                 PS.ART_ADMIN_GET_ALL_TRUNC,
                 PS.ART_ADMIN_GET_ALL_BY_CAT,
@@ -109,7 +113,9 @@ public class AdminServlet extends HttpServlet {
                 PS.ART_ADMIN_SET_CAT_TITLE_CONTENT_HIDDEN_ONE,
                 PS.ART_ADMIN_DEL_ONE,
                 PS.CAT_ADMIN_SET_NAME_ONE,
-                PS.CAT_ADMIN_DEL_ONE
+                PS.CAT_ADMIN_DEL_ONE,
+                PS.CAT_ADMIN_MAKE_ONE,
+                PS.ADMIN_GET_LAST_ID
         };
         // FUCKING FINALLY
 
@@ -247,6 +253,28 @@ public class AdminServlet extends HttpServlet {
             log.severe("The servlet " + getServletName() + " has had a SQLException.");
             e.printStackTrace();
             return -1;
+        }
+    }
+
+    private boolean createArticle(String title, int catId, String content, boolean hidden) {
+        try {
+            PreparedStatement ps = dao.getPreparedStatement(PS.ART_ADMIN_MAKE_ONE);
+            ps.setInt(1, catId);
+            ps.setString(2, title);
+            ps.setString(3, content);
+            ps.setBoolean(4, hidden);
+            int out = ps.executeUpdate();
+            if (out == 1) {
+                // Article created
+                return true;
+            } else {
+                // Article not created
+                return false;
+            }
+        } catch (SQLException e) {
+            log.severe("The servlet " + getServletName() + " has had a SQL moment.");
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -496,6 +524,85 @@ public class AdminServlet extends HttpServlet {
     }
 
     /**
+     * Get all articles by category.
+     * Yes, I literally just copied the other method and changed the SQL statement, problem?
+     * @param catId the category ID to get articles from.
+     * @param truncate set to 0 to not truncate, or a positive integer to truncate.
+     * @param limit the maximum number of articles to get. Set to 0 to get all.
+     * @param starts the number of articles to skip. Set to 0 to not skip any.
+     * @param showBoth if true, gets both hidden and non-hidden articles. If false, gets only non-hidden articles..
+     * @return articles array, empty if none found, or null if an error occurred.
+     */
+    private Article[] getArticlesByCat(int catId, int truncate, int limit, int starts, boolean showBoth) {
+        return getArticlesByCat(catId ,truncate, limit, starts, false, showBoth);
+    }
+
+    /**
+     * Get all articles by category.
+     * Yes, I literally just copied the other method and changed the SQL statement, problem?
+     * @param catId the category ID to get articles from.
+     * @param truncate set to 0 to not truncate, or a positive integer to truncate.
+     * @param limit the maximum number of articles to get. Set to 0 to get all.
+     * @param starts the number of articles to skip. Set to 0 to not skip any.
+     * @param hidden irrelevant if showBoth is true. If false, counts only non-hidden articles. If true, counts only hidden articles.
+     * @param showBoth if true, gets both hidden and non-hidden articles. If false, gets only either articles.
+     * @return articles array, empty if none found, or null if an error occurred.
+     */
+    private Article[] getArticlesByCat(int catId, int truncate, int limit, int starts, boolean hidden, boolean showBoth) {
+        try {
+            PreparedStatement useStatement;
+            if (limit == 0 && starts == 0) {
+                // OK This should be invalid, wait no, this is for GET ALL
+                if (truncate > 0) {
+                    useStatement = getArticlesPS(true, true, hidden, showBoth, true);
+                    useStatement.setInt(1, truncate);
+                    useStatement.setInt(2, truncate);
+                    useStatement.setInt(3, catId);
+                } else {
+                    useStatement = getArticlesPS(true, true, hidden, showBoth, true);
+                    useStatement.setInt(1, catId);
+                }
+            } else {
+                if (limit <= 0 || starts <= 0) {
+                    log.warning("The servlet " + getServletName() + " has had a bruh moment.");
+                    return null;
+                } else {
+                    int catIdParamNum = 1;
+                    int limitParamNum = 2;
+                    int startsParamNum = 3;
+                    if (truncate > 0) {
+                        useStatement = getArticlesPS(true, true, hidden, showBoth, true);
+                        useStatement.setInt(1, truncate);
+                        useStatement.setInt(2, truncate);
+                        catIdParamNum = 3;
+                        limitParamNum = 4;
+                        startsParamNum = 5;
+                    } else {
+                        useStatement = getArticlesPS(false, true, hidden, showBoth, true);
+                    }
+                    useStatement.setInt(catIdParamNum, catId);
+                    useStatement.setInt(limitParamNum, limit);
+                    useStatement.setInt(startsParamNum, starts - 1);
+                }
+            }
+            ResultSet out = useStatement.executeQuery();
+            // Bruh why do I have to use list
+            ArrayList<Article> articles = new ArrayList<>();
+            while (out.next()) {
+                articles.add(new Article(out.getInt("id"), out.getInt("category_id"), out.getString("category_name"), out.getLong("made"), out.getLong("lastEdited"), out.getString("title"), out.getString("content"), out.getBoolean("hidden")));
+            }
+            Article[] articlesArray = new Article[articles.size()];
+            articlesArray = articles.toArray(articlesArray);
+            return articlesArray;
+        } catch (SQLException e) {
+            log.severe("The servlet " + getServletName() + " has had a SQLException.");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    /**
      * Updates article's title, content, and/or category.
      * @param article article object to update
      * @param catId new category id, set to -1 if not changing
@@ -708,9 +815,7 @@ public class AdminServlet extends HttpServlet {
 
     private Category[] getCategories() {
         // No fancy shit at this point, just get categories and leave
-        try {
-            PreparedStatement ps = dao.getPreparedStatement(PS.CAT_GET_ALL);
-            ResultSet out = ps.executeQuery();
+        try (ResultSet out = dao.getPreparedStatement(PS.CAT_GET_ALL).executeQuery()) {
             ArrayList<Category> cats = new ArrayList<>();
             while (out.next()) {
                 cats.add(new Category(out.getInt("id"), out.getString("name")));
@@ -724,6 +829,108 @@ public class AdminServlet extends HttpServlet {
             return null;
         }
     }
+
+    /**
+     * Good thing only name needs to be changed. Right?
+     * Right??
+     * @param id category to change
+     * @param name new name
+     * @return category with changed name if success, no change if not, null if SQL error
+     */
+    private boolean updateCategory(int id, String name) {
+        try {
+            PreparedStatement ps = dao.getPreparedStatement(PS.CAT_ADMIN_SET_NAME_ONE);
+            ps.setString(1, name);
+            ps.setInt(2, id);
+            return ps.executeUpdate() == 1;
+        } catch (SQLException e) {
+            log.severe("The servlet " + getServletName() + " has had a SQL moment.");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private Category createCategory(String name) {
+        try {
+            PreparedStatement ps = dao.getPreparedStatement(PS.CAT_ADMIN_MAKE_ONE);
+            ps.setString(1, name);
+            int out = ps.executeUpdate();
+            if (out == 1) {
+                // Category created
+                // Getting the ID of the new category
+                ps = dao.getPreparedStatement(PS.ADMIN_GET_LAST_ID);
+                ResultSet out2 = ps.executeQuery();
+                if (out2.next()) {
+                    return new Category(out2.getInt("id"), name);
+                } else {
+                    // last_insert_id not found???
+                    log.warning("The servlet " + getServletName() + " has had a bruh moment.");
+                    return null;
+                }
+            } else {
+                // Category not created
+                return null;
+            }
+        } catch (SQLException e) {
+            log.severe("The servlet " + getServletName() + " has had a SQL moment.");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * no point getting the object lol
+     */
+    private boolean deleteCategory(int id) {
+        try {
+            PreparedStatement ps = dao.getPreparedStatement(PS.CAT_ADMIN_DEL_ONE);
+            ps.setInt(1, id);
+            int out = ps.executeUpdate();
+            // Category deleted or not
+            return out == 1;
+        } catch (SQLException e) {
+            log.severe("The servlet " + getServletName() + " has had a SQL moment.");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private User[] getUsers() {
+        // No fancy shit at this point, just get categories and leave
+        try (ResultSet out = dao.getPreparedStatement(PS.USERS_GET_ALL).executeQuery()) {
+            ArrayList<User> usersList = new ArrayList<>();
+            while (out.next()) {
+                // Not getting salt, irrelevant
+                usersList.add(new User(out.getInt("id"), out.getString("username"), null, out.getString("name"), out.getBoolean("admin"), out.getLong("created"), out.getLong("last_login")));
+            }
+            User[] users = new User[usersList.size()];
+            users = usersList.toArray(users);
+            return users;
+        } catch (SQLException e) {
+            log.severe("The servlet " + getServletName() + " has had a SQLException.");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Delete user
+     * @param id user to be deleted
+     * @return true if success, false if not, also false if SQL error
+     */
+    private boolean deleteUser(int id) {
+        try {
+            PreparedStatement ps = dao.getPreparedStatement(PS.USERS_ADMIN_DEL_ONE);
+            ps.setInt(1, id);
+            return ps.executeUpdate() == 1;
+        } catch (SQLException e) {
+            // Bruh
+            log.severe("Servlet " + getServletName() + " has hit a SQL error");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     /**
      * Gets rid of existing parameters in the URL and adds the new ones, if any.
@@ -752,60 +959,71 @@ public class AdminServlet extends HttpServlet {
      * 1 = target not found
      * 2 = option not found
      * 3 = parsing error
+     * 4 = deletion failed
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Before doing funny stuff, check if user is logged in and admin first, if not, yeet the guy into the index!
         if(authenticateAdmin(request.getSession(false))) {
-            String referer = request.getHeader("referer");
-            if (referer == null || !referer.contains("admin.jsp") || request.getParameter("admin") != null) {
-                // Our admin got lost, back to admin.jsp
-                response.sendRedirect("admin.jsp");
-                return;
-            } else {
-                if (request.getParameter("show") != null) {
-                    // Admin logged in, referer valid, has selected something to show, lets go!
-                    String adminChange = request.getParameter("admin");
-                    // num, page, truncate kinda mandatory at this point
-                    int num, page, truncate; // Number of items to show and current page
-                    try {
-                        num = Integer.parseInt(request.getParameter("num"));
-                        page = Integer.parseInt(request.getParameter("page"));
-                        truncate = Integer.parseInt(request.getParameter("truncate"));
-                    } catch (NumberFormatException e) {
-                        // not a number
-                        request.setAttribute("result", 3);
-                        return;
-                    }
-                    if (adminChange.equals("article")) {
+            if (request.getParameter("show") != null) {
+                // Admin logged in, has selected something to show, lets go!
+                String adminChange = request.getParameter("show");
+                // num, page, truncate kinda mandatory at this point
+                int num, page, truncate; // Number of items to show and current page
+                try {
+                    num = Integer.parseInt(request.getParameter("num"));
+                    page = Integer.parseInt(request.getParameter("page"));
+                    truncate = Integer.parseInt(request.getParameter("truncate"));
+                } catch (NumberFormatException e) {
+                    // not a number
+                    request.setAttribute("result", 3);
+                    return;
+                }
+                switch (adminChange) {
+                    case "articles":
                         // Check if id is specified
                         if (request.getParameter("id") != null) {
                             // Get article by id
-                            int id = Integer.parseInt(request.getParameter("id"));
-                            Article article = getArticle(id, 0);
-                            if (article != null) {
-                                // Article found, return it
-                                request.setAttribute("articleCount", countArticles(true));
-                                request.setAttribute("hiddenArticleCount", countArticles(true, false));
-                                request.setAttribute("article", article);
-                                return;
-                            } else {
-                                // Article not found, return not found
-                                request.setAttribute("result", 1);
-                                return;
+                            switch (Objects.requireNonNullElse(request.getParameter("does"), "woah")) {
+                                case "del":
+                                    break;
+                                case "hide":
+                                    break;
+                                case "unhide":
+                                    break;
+                                case "edit":
+                                    break;
+                                case "new":
+                                    break;
+                                default:
+                                    // Invalid option
+                                    request.setAttribute("result", 2);
+                                    break;
                             }
                         } else {
                             // No id specified, show all articles
                             if (request.getParameter("hidden") != null) {
+                                boolean hidden = Boolean.parseBoolean(request.getParameter("hidden"));
+                                if (hidden) {
+                                    int resultCount = countArticles(true, false);
+                                    request.setAttribute("maxPage", Math.floorDiv(resultCount, num) + 1);
+                                    request.setAttribute("articleCount", resultCount);
+                                    request.setAttribute("hiddenArticleCount", countArticles(true, false));
+                                    request.setAttribute("articles", getArticles(truncate, num, (page * num) - (num - 1), true, false));
+                                    request.setAttribute("result", 0);
+                                } else {
 
+                                }
                             } else {
-                                request.setAttribute("articleCount", countArticles(true));
+                                int resultCount = countArticles(true);
+                                request.setAttribute("maxPage", Math.floorDiv(resultCount, num) + 1);
+                                request.setAttribute("articleCount", resultCount);
                                 request.setAttribute("hiddenArticleCount", countArticles(true, false));
                                 request.setAttribute("articles", getArticles(truncate, num, (page * num) - (num - 1), true));
                                 request.setAttribute("result", 0);
                             }
                             return;
                         }
-                    } else if (adminChange.equals("category")) {
+                    case "categories":
                         if (request.getParameter("id") != null) {
                             // Get category by id
                             int id = Integer.parseInt(request.getParameter("id"));
@@ -821,32 +1039,107 @@ public class AdminServlet extends HttpServlet {
                             }
                         } else {
                             // No id specified, show all categories
-                            request.setAttribute("result", 0);
-
+                            try {
+                                // Ok fuck it, 50 gorillion SQL queries in one call
+                                // 1. Get all cats, 2. Count cats, 3. Split them in pages, 4. Fetch article count, 5, Get most recent article, 6. ??? 6, Profit
+                                // Does is already assigned, should be
+                                if (request.getParameter("does").equals("del")) {
+                                    // Cat id should be a real valid id
+                                    int id = Integer.parseInt(request.getParameter("catId"));
+                                    if (id == 0) {
+                                        request.setAttribute("result", 4);
+                                    } else {
+                                        deleteCategory(id);
+                                    }
+                                } else if (request.getParameter("does").equals("new")) {
+                                    // New category default
+                                    Category cat = createCategory("New Category");
+                                    if (Objects.nonNull(cat)) request.setAttribute("catId", cat.getId());
+                                }
+                                Category[] cats = getCategories();
+                                if (cats != null) {
+                                    int catCount = countCategories();
+                                    // Do the wucky fucky calculation stuff
+                                    int maxPage = (catCount / num) + 1;
+                                    int limit = page * num;
+                                    if (limit > catCount) {
+                                        limit = catCount;
+                                    }
+                                    int start = (num * page)  - num;
+                                    if (start > limit) {
+                                        request.setAttribute("maxShow", 0);
+                                        request.setAttribute("catCount", catCount);
+                                        request.setAttribute("maxPage", maxPage);
+                                        // Indexes must be matching
+                                        request.setAttribute("categories", null);
+                                        return;
+                                    }
+                                    // limit not go over cat count, if cat count g
+                                    // I could make a check for the start index but meh
+                                    Category[] catsPage = Arrays.copyOfRange(cats, start, limit);
+                                    int[] artCounts = new int[catsPage.length];
+                                    int[] visArtCounts = new int[catsPage.length];
+                                    int[] hidArtCounts = new int[catsPage.length];
+                                    Article[] recentArticles = new Article[cats.length];
+                                    for (int i = 0; i < catsPage.length; i++) {
+                                        artCounts[i] = countArticlesByCat(catsPage[i].getId(), true);
+                                        visArtCounts[i] = countArticlesByCat(catsPage[i].getId(), false, false);
+                                        hidArtCounts[i] = countArticlesByCat(catsPage[i].getId(), true, false);
+                                        // Truncating takes too much time lel
+                                        Article[] recentArticle =  getArticlesByCat(catsPage[i].getId(), 0, 1, 1,true);
+                                        if (recentArticle == null) {
+                                            // Bruh it suffered a stronk
+                                            request.setAttribute("maxPage", 1);
+                                            request.setAttribute("articles", null);
+                                            return;
+                                        } else {
+                                            if (recentArticle.length > 0) {
+                                                recentArticles[i] = recentArticle[0];
+                                            } else {
+                                                recentArticles[i] = null;
+                                            }
+                                        }
+                                    }
+                                    request.setAttribute("maxShow", catsPage.length - 1);
+                                    request.setAttribute("catCount", catCount);
+                                    request.setAttribute("maxPage", maxPage);
+                                    // Indexes must be matching
+                                    request.setAttribute("categories", catsPage);
+                                    request.setAttribute("articleCounts", artCounts);
+                                    request.setAttribute("visibleArticleCounts", visArtCounts);
+                                    request.setAttribute("hiddenArticleCounts", hidArtCounts);
+                                    request.setAttribute("recentArticles", recentArticles);
+                                } else {
+                                    // Boo
+                                    return;
+                                }
+                            } catch (NumberFormatException e) {
+                                return;
+                            }
                             return;
                         }
 
-                    } else if (adminChange.equals("user")) {
+                    case "users":
 
-                    } else {
+                        break;
+                    default:
                         // Option not found
                         request.setAttribute("result", 2);
                         return;
-                    }
-                } else {
-                    // Return total counts of articles, categories, and users
-                    request.setAttribute("result", 0);
-                    request.setAttribute("articleCount", countArticles(true));
-                    request.setAttribute("hiddenArticleCount", countArticles(true, false));
-                    request.setAttribute("categoryCount", countCategories());
-                    request.setAttribute("userCount", countUsers());
-                    return;
                 }
+            } else {
+                // Return total counts of articles, categories, and users
+                request.setAttribute("result", 0);
+                request.setAttribute("articleCount", countArticles(true));
+                request.setAttribute("hiddenArticleCount", countArticles(true, false));
+                request.setAttribute("categoryCount", countCategories());
+                request.setAttribute("userCount", countUsers());
+                return;
             }
         } else {
             // Not admin or not logged in, idc, back to the lobby
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.sendRedirect("index.jsp");
+            response.sendRedirect("login.jsp");
             return;
         }
     }
@@ -855,6 +1148,12 @@ public class AdminServlet extends HttpServlet {
      * doPost method for the servlet. Handles POST requests.
      * This is supposed to be actioned by the forms from admin.jsp.
      * So this will redirect back to admin.jsp.
+     * 0 = success
+     * 1 = target not found
+     * 2 = option not found
+     * 3 = parsing error
+     * 4 = deletion failed
+     * 5 = update failed
      */
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Before doing funny stuff, check if user is logged in and admin first, if not, yeet the guy into the index!
@@ -866,6 +1165,71 @@ public class AdminServlet extends HttpServlet {
                 // Referer exists, check if from admin.jsp
                 if (referer.contains("admin.jsp")) {
                     // Referer is from admin.jsp, so we can do some stuff
+                    // Should be provided by the forms, originating from admin.jsp
+
+                    String show = request.getParameter("show");
+                    String action = request.getParameter("action");
+
+                    int page, num;
+                    try {
+                        page = Integer.parseInt(request.getParameter("page"));
+                        num = Integer.parseInt(request.getParameter("num"));
+                    } catch (NumberFormatException e) {
+                        // Bruh
+                        response.sendRedirect(fixURL(referer, "result=3"));
+                        return;
+                    }
+                    if (show == null) {
+                        // No action specified, back to admin.jsp
+                        response.sendRedirect(fixURL(referer, "&result=2"));
+                        return;
+                    } else if (action == null) {
+                        response.sendRedirect(fixURL(referer, "num=" + num + "&show=" + show + "&result=2"));
+                        return;
+                    }
+                    String params = "page=" + page + "&num=" + num + "&show=" + show;
+                    switch (show) {
+                        case "articles":
+                            // Article stuff
+                            break;
+                        case "categories":
+                            // Category stuff
+                            // No need to use a switch here, since there is only one option, renaming
+                            if (action.equals("rename")) {
+                                // Cat id should be a real valid id
+                                int id = Integer.parseInt(request.getParameter("id"));
+                                if (id == 0) {
+                                    request.setAttribute("result", 4);
+                                } else {
+                                    String newName = request.getParameter("newName");
+                                    if (newName == null) {
+                                        // bruh moment
+                                        response.sendRedirect(fixURL(referer, params + "&result=3"));
+                                    } else {
+                                        // Rename the category
+                                        if (updateCategory(id, newName)) {
+                                            // Success
+                                            response.sendRedirect(fixURL(referer, params + "&result=0"));
+                                        } else {
+                                            // Failure
+                                            response.sendRedirect(fixURL(referer, params + "&result=4"));
+                                        }
+                                    }
+                                }
+                            } else {
+                                // Option not found
+                                response.sendRedirect(referer);
+                                return;
+                            }
+                            break;
+                        case "users":
+                            // User stuff
+                            break;
+                        default:
+                            // Option not found
+                            response.sendRedirect(referer);
+                            return;
+                    }
                     return;
                 } else {
                     // Might be able to do some stuff outside admin.jsp later, but for now, yeet the guy into the admin
@@ -880,7 +1244,7 @@ public class AdminServlet extends HttpServlet {
         } else {
             // Not admin or not logged in, idc, back to the lobby
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.sendRedirect("index.jsp");
+            response.sendRedirect("login.jsp");
         }
     }
 }

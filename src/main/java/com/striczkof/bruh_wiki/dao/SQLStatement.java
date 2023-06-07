@@ -50,6 +50,7 @@ enum SQLStatement {
     ART_GET_SOME_TRUNC_BY_EDITED_RANGE("SELECT articles.id AS 'id', category_id, categories.name AS 'category_name', UNIX_TIMESTAMP(made) AS 'made', UNIX_TIMESTAMP(lastEdited) AS 'lastEdited', title, CASE WHEN CHAR_LENGTH(content) > ? THEN CONCAT(SUBSTRING(content, 1, ?), '...') ELSE content END AS 'content', hidden FROM articles LEFT JOIN categories ON articles.category_id = categories.id WHERE hidden IS FALSE ORDER BY lastEdited DESC LIMIT ? OFFSET ?"),
     ART_GET_COUNT_BY_MATCHING("SELECT count(id) AS 'count' FROM articles WHERE hidden IS FALSE AND MATCH (title, content) AGAINST (? WITH QUERY EXPANSION)"),
     ART_GET_SOME_BY_MATCHING("SELECT articles.id AS 'id', category_id, categories.name AS 'category_name', UNIX_TIMESTAMP(made) AS 'made', UNIX_TIMESTAMP(lastEdited) AS 'lastEdited', title, CASE WHEN CHAR_LENGTH(content) > ? THEN CONCAT(SUBSTRING(content, 1, ?), '...') ELSE content END AS 'content', hidden, MATCH (title, content) AGAINST (? WITH QUERY EXPANSION) AS 'relevance' FROM articles LEFT JOIN categories ON articles.category_id = categories.id WHERE hidden IS FALSE AND MATCH (title, content) AGAINST (? WITH QUERY EXPANSION) ORDER BY 'relevance' DESC LIMIT ? OFFSET ?"),
+    ART_ADMIN_MAKE_ONE("INSERT INTO articles (category_id, title, content, hidden) VALUES (?, ?, ?, ?)"),
     ART_ADMIN_GET_COUNT_HIDDEN("SELECT COUNT(id) AS 'count' FROM articles WHERE hidden IS TRUE"),
     ART_ADMIN_GET_COUNT_HIDDEN_BY_CAT("SELECT COUNT(id) AS 'count' FROM articles WHERE HIDDEN IS TRUE AND category_id = ?"),
     ART_ADMIN_GET_ONE_HIDDEN("SELECT articles.id AS 'id', category_id, categories.name AS 'category_name', UNIX_TIMESTAMP(made) AS 'made', UNIX_TIMESTAMP(lastEdited) AS 'lastEdited', title, content, hidden FROM articles LEFT JOIN categories ON articles.category_id = categories.id WHERE hidden IS TRUE AND articles.id = ?"),
@@ -96,9 +97,11 @@ enum SQLStatement {
     CAT_GET_COUNT("SELECT COUNT(id) AS 'count' FROM categories"),
     CAT_GET_ONE("SELECT id, name FROM categories WHERE id = ?"),
     CAT_GET_ALL("SELECT id, name FROM categories"),
+    CAT_ADMIN_MAKE_ONE("INSERT INTO categories (name) VALUES (?)"),
     CAT_ADMIN_SET_NAME_ONE("UPDATE categories SET name = ? WHERE id = ?"),
     CAT_ADMIN_DEL_ONE("DELETE FROM categories WHERE id = ?"),
-    USERS_GET_ADMIN_ONE("SELECT admin FROM users WHERE id = ?");
+    USERS_GET_ADMIN_ONE("SELECT admin FROM users WHERE id = ?"),
+    ADMIN_GET_LAST_ID("SELECT LAST_INSERT_ID() AS 'id'");
     // FUCKING FINALLY
 
     private final String statement;

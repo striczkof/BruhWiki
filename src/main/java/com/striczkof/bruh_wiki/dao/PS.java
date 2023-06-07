@@ -200,6 +200,11 @@ public enum PS {
     ART_GET_SOME_BY_MATCHING,
 
     /**
+     * @see SQLStatement#ART_ADMIN_MAKE_ONE
+     */
+    ART_ADMIN_MAKE_ONE,
+
+    /**
      * @see SQLStatement#ART_ADMIN_GET_COUNT_HIDDEN
      */
     ART_ADMIN_GET_COUNT_HIDDEN,
@@ -301,7 +306,7 @@ public enum PS {
     ART_ADMIN_GET_ALL_TRUNC_BY_CAT,
 
     /**
-     * @see SQLStatement#ART_ADMIN_GET_SOME_HIDDEN_BY_EDITED_RANGE
+     * @see SQLStatement#ART_ADMIN_GET_SOME_BY_CAT_EDITED_RANGE
      */
     ART_ADMIN_GET_SOME_BY_CAT_EDITED_RANGE,
 
@@ -428,6 +433,11 @@ public enum PS {
     CAT_GET_ALL,
 
     /**
+     * @see SQLStatement#CAT_ADMIN_MAKE_ONE
+     */
+    CAT_ADMIN_MAKE_ONE,
+
+    /**
      * @see SQLStatement#CAT_ADMIN_SET_NAME_ONE
      */
     CAT_ADMIN_SET_NAME_ONE,
@@ -440,5 +450,10 @@ public enum PS {
     /**
      * @see SQLStatement#USERS_GET_ADMIN_ONE
      */
-    USERS_GET_ADMIN_ONE;
+    USERS_GET_ADMIN_ONE,
+
+    /**
+     * @see SQLStatement#ADMIN_GET_LAST_ID
+     */
+    ADMIN_GET_LAST_ID;
 }

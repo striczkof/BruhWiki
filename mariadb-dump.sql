@@ -34,7 +34,7 @@ CREATE TABLE `articles` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `category_id` int(11) NOT NULL DEFAULT 0,
   `made` timestamp NULL DEFAULT current_timestamp(),
-  `lastEdited` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
+  `lastEdited` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `title` tinytext DEFAULT NULL,
   `content` longtext DEFAULT NULL,
   `hidden` tinyint(1) NOT NULL DEFAULT 0,
@@ -138,6 +138,21 @@ INSERT INTO `categories` VALUES
 (20,'Architecture');
 /*!40000 ALTER TABLE `categories` ENABLE KEYS */;
 UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
+/*!50003 SET collation_connection  = utf8mb3_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`bruh_wiki`@`localhost`*/ /*!50003 TRIGGER on_delete_set_default BEFORE DELETE ON categories FOR EACH ROW UPDATE articles SET category_id = DEFAULT (category_id) WHERE category_id = OLD.id */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `users`
@@ -157,7 +172,7 @@ CREATE TABLE `users` (
   `last_login` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`) USING HASH
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -167,8 +182,8 @@ CREATE TABLE `users` (
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` VALUES
-(1,'admin',0xB194D61F7FC49B245F03912957AB40E97967309990134047D31B07B177FE2FF7,0xA58F51A7950DFB07B39C30D28ED39A65,'Administrator',1,'2023-06-02 22:35:23','2023-06-03 23:44:42'),
-(2,'user',0x25355DCF944CF4EADBB540088EEB5236938ED33FE739991E0DE80EA337AF64EA,0x22859362F1C855563AD66B953EF5A886,'User',0,'2023-06-03 13:41:00','2023-06-03 13:41:00');
+(1,'admin',0x56C69600393B917DEFD59DE773B8CB788DC61E3E28BB539FDB0DC2CBE6718AF8,0x9EC109204FDB64FD805D5FF316646664,'Administrator',1,'2023-06-02 22:35:23','2023-06-07 06:06:31'),
+(2,'user',0x25355DCF944CF4EADBB540088EEB5236938ED33FE739991E0DE80EA337AF64EA,0x22859362F1C855563AD66B953EF5A886,'User',0,'2023-06-03 13:41:00','2023-06-06 13:50:46');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -181,4 +196,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-05 19:20:53
+-- Dump completed on 2023-06-07 16:49:40

@@ -118,13 +118,16 @@
           </c:when>
           <c:otherwise>
           <div class="content__main">
+            <c:if test="${not empty param.search}">
+              <c:set var="title" scope="page" value="${requestScope.resultCount} results for '${param.search}'"/>
+            </c:if>
             <h2 class="content-header"><c:out value="${title}"/></h2>
-            <form class="search" action="articles.jsp" method="get"><label for="search">Search</label><input type="search" name="search" id="search" value="${param.search}" required/><input type="submit" value="Go!"/></form>
+            <form class="search" action="articles.jsp" method="get"><label for="search">Search: </label><input type="search" name="search" id="search" value="${param.search}" required/><input type="submit" value="Go!"/></form>
             <!-- Must be included before -->
             <ul class="article-list">
               <c:forEach items="${requestScope.articles}" var = "article">
                 <li class="article-list__item article">
-                  <h3 class="article__title"><c:out value="${article.title}"/></h3>
+                  <h4 class="article__title"><c:out value="${article.title}"/></h4>
                   <p class="article__subtitle">In <a href="categories.jsp?id=${article.categoryId}"><c:out value="${article.categoryName}"/></a> last edited on <fmt:formatDate type="date" value="${article.lastEditedDate}"/></p>
                   <p class="article__body"><c:out value="${article.content}"/> <a href="articles.jsp?id=${article.id}">Read more >>></a> </p>
                 </li>
