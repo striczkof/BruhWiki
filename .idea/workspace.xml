@@ -2,38 +2,20 @@
 <project version="4">
   <component name="ArtifactsWorkspaceSettings">
     <artifacts-to-build>
-      <artifact name="BruhWiki:Deployment" />
+      <artifact name="BruhWiki:war exploded" />
     </artifacts-to-build>
   </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ddd7e759-6044-47a8-a8e1-a3e869130efd" name="Changes" comment="Some work on admin servlet, Made the wiki name dynamic">
-      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/artifacts/BruhWiki_Deployment.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/webContexts.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/webServers.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+    <list default="true" id="ddd7e759-6044-47a8-a8e1-a3e869130efd" name="Changes" comment="Pre-release work, mostly admin stuff">
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/BruhWiki_Deployment.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bruh_wiki.sql" beforeDir="false" afterPath="$PROJECT_DIR$/mariadb-dump.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/controller/AdminServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/controller/AdminServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/controller/ArticleServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/controller/ArticleServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/controller/UserServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/controller/UserServlet.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/dao/DatabaseAccess.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/dao/DatabaseAccess.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/dao/PS.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/dao/PS.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/dao/SQLStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/striczkof/bruh_wiki/dao/SQLStatement.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/about.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/about.jsp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/webapp/admin.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/admin.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/articles.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/articles.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/categories.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/categories.jsp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/webapp/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/test.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/test.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/user.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/user.jsp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -129,7 +111,7 @@
       <option name="OPEN_IN_BROWSER" value="false" />
       <option name="UPDATING_POLICY" value="restart-server" />
       <deployment>
-        <artifact name="BruhWiki:Deployment">
+        <artifact name="BruhWiki:war exploded">
           <settings>
             <option name="CONTEXT_PATH" value="/" />
           </settings>
@@ -209,7 +191,10 @@
       <method v="2">
         <option name="Make" enabled="true" />
         <option name="BuildArtifacts" enabled="true">
-          <artifact name="BruhWiki:Deployment" />
+          <artifact name="BruhWiki:war exploded" />
+        </option>
+        <option name="BuildArtifacts" enabled="true">
+          <artifact name="BruhWiki:war" />
         </option>
       </method>
     </configuration>
@@ -220,7 +205,7 @@
       <option name="OPEN_IN_BROWSER_URL" value="https://bruh-wiki.striczkof.io:443" />
       <option name="UPDATING_POLICY" value="redeploy-artifacts" />
       <deployment>
-        <artifact name="BruhWiki:Deployment">
+        <artifact name="BruhWiki:war">
           <settings>
             <option name="CONTEXT_PATH" value="" />
           </settings>
@@ -281,7 +266,7 @@
       <method v="2">
         <option name="Make" enabled="true" />
         <option name="BuildArtifacts" enabled="true">
-          <artifact name="BruhWiki:Deployment" />
+          <artifact name="BruhWiki:war" />
         </option>
       </method>
     </configuration>
@@ -318,7 +303,9 @@
       <workItem from="1685788173714" duration="63895000" />
       <workItem from="1685912544843" duration="119344000" />
       <workItem from="1686122943113" duration="106000" />
-      <workItem from="1686123057456" duration="15380000" />
+      <workItem from="1686123057456" duration="16972000" />
+      <workItem from="1686186775967" duration="842000" />
+      <workItem from="1686226841722" duration="5466000" />
     </task>
     <task id="LOCAL-00001" summary="First commit">
       <created>1685788308518</created>
@@ -383,7 +370,14 @@
       <option name="project" value="LOCAL" />
       <updated>1686028090294</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Pre-release work, mostly admin stuff">
+      <created>1686145603238</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1686145603238</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -411,6 +405,7 @@
     <MESSAGE value="Finally! Completed work on articles/categories, starting work on admin portal" />
     <MESSAGE value="Finally done on article/category stuff, starting work on admin panel" />
     <MESSAGE value="Some work on admin servlet, Made the wiki name dynamic" />
-    <option name="LAST_COMMIT_MESSAGE" value="Some work on admin servlet, Made the wiki name dynamic" />
+    <MESSAGE value="Pre-release work, mostly admin stuff" />
+    <option name="LAST_COMMIT_MESSAGE" value="Pre-release work, mostly admin stuff" />
   </component>
 </project>

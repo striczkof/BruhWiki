@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%--
   Created by IntelliJ IDEA.
   User: striczkof
@@ -104,11 +105,12 @@
                                                 <c:when test="${param.does eq 'edit'}">
                                                     <!-- Edit article -->
                                                     <jsp:include page="/article-servlet">
-                                                        <jsp:param name="id" value="${param.id}"/>
+                                                        <jsp:param name="id" value="${param.artId}"/>
                                                         <jsp:param name="does" value="edit"/>
                                                         <jsp:param name="show" value="${0}"/>
                                                         <jsp:param name="num" value="${0}"/>
                                                         <jsp:param name="page" value="${0}"/>
+                                                        <jsp:param name="truncate" value="${0}"/>
                                                     </jsp:include>
                                                     <c:set var="title" scope="page" value="Edit '${requestScope.article.name}'"/>
                                                 </c:when>
@@ -117,11 +119,11 @@
                                                     <!-- no need to include article-servlet, you're literally making a new article -->
                                                     <!-- oh ye i forgot, need to grab the category list -->
                                                     <jsp:include page="/article-servlet">
-                                                        <jsp:param name="id" value="-1"/>
                                                         <jsp:param name="does" value="new"/>
                                                         <jsp:param name="show" value="${0}"/>
                                                         <jsp:param name="num" value="${0}"/>
                                                         <jsp:param name="page" value="${0}"/>
+                                                        <jsp:param name="truncate" value="${0}"/>
                                                     </jsp:include>
                                                     <c:set var="title" scope="page" value="New Article"/>
                                                 </c:when>
@@ -130,25 +132,28 @@
                                                 </c:otherwise>
                                             </c:choose>
                                             <!-- Prepare form -->
-                                            <form name="article" method="post" action="admin-servlet">
+                                            <form name="article" id="article-form" method="post" action="admin-servlet">
                                                 <input type="hidden" name="does" value="${param.does}"/>
-                                                <input type="hidden" name="id" value="${artId}"/>
-                                                <label for="title">Title</label>
-                                                <input type="text" name="Title" id="title" value="${not empty pageScope.article.title ? param.does : ''}" required/>
+                                                <c:if test="${param.does eq 'edit'}">
+                                                    <input type="hidden" name="id" value="${param.artId}"/>
+                                                </c:if>
+                                                <label for="title">Title</label><br/>
+                                                <input type="text" name="Title" id="title" value="${not empty pageScope.article.title ? param.does : ''}" required/><br/>
                                                 <label for="category">Category</label>
+                                                <br/>
                                                 <select name="catId" id="category">
-                                                    <c:forEach items="${requestScope.categories}" var="categories">
-                                                        <option value="${requestScope.category.id}" ${not empty requestScope.category.id eq requestScope.catId ? ' selected' : ''}>${requestScope.category.name}</option>
+                                                    <c:forEach items="${requestScope.categories}" var="category">
+                                                        <option value="${category.id}" ${not empty requestScope.article and category.id eq requestScope.article.categoryId ? ' selected' : ''}>${category.name}</option>
                                                     </c:forEach>
                                                 </select>
-                                                <label for="content">Content</label>
-                                                <textarea id="content" name="content" rows="40" cols="50">${not empty pageScope.article.content ? pageScope.article.content : ''}</textarea>
-                                                    ${not empty pageScope.article.content ? pageScope.article.content : ''}
-                                                <input type="radio" id="hidden-false" name="age" value="30">
-                                                <label for="hidden-false">0 - 30</label><br>
-                                                <input type="radio" id="hidden-true" name="age" value="60">
-                                                <label for="hidden-true"></label><br>
-                                                <input type="submit" value="Submit"/>
+                                                <br/>
+                                                <label for="content">Content</label><br/>
+                                                <textarea id="content" name="content" rows="40" cols="50">${not empty pageScope.article.content ? pageScope.article.content : ''}</textarea><br/>
+                                                <label>Publish the article?</label><br/>
+                                                <input type="radio" id="hidden-true" name="hidden" value="true">
+                                                <label for="hidden-true">Yes (make it visible)</label><br>
+                                                <input type="radio" id="hidden-false" name="hidden" value="false">
+                                                <label for="hidden-false">No (make it hidden)</label><br>
                                             </form>
                                         </c:when>
                                         <c:otherwise>
@@ -167,7 +172,8 @@
                                                 <ul class="article-list">
                                                     <c:forEach items="${requestScope.articles}" var = "article">
                                                         <li class="article-list__item--small article ">
-                                                            <h3 class="article__title"><c:out value="${article.title}"/></h3>
+                                                            <h4 class="article__title"><c:out value="${article.title}"/></h4>
+                                                            <p class="article__edit"><a href="admin.jsp?${not empty param.page ? 'page='.concat(param.page.toString().concat('&')) : ''}show=categories&catId=${article.id}&does=rn">Rename</a> | <a href="admin.jsp?${not empty param.page ? 'page='.concat(param.page.toString().concat('&')) : ''}show=categories&catId=${requestScope.categories[i].id}&does=del">Delete</a></p>
                                                             <p class="article__subtitle">In <a href="categories.jsp?id=${article.categoryId}"><c:out value="${article.categoryName}"/></a> last edited on <fmt:formatDate type="date" value="${article.lastEditedDate}"/></p>
                                                             <p class="article__body"><c:out value="${article.content}"/> <a href="articles.jsp?id=${article.id}">Read more >>></a></p>
                                                         </li>
@@ -176,16 +182,6 @@
                                             </div>
                                         </c:otherwise>
                                     </c:choose>
-                                    <div class="content__main__panel--right">
-                                        <ul class="big-blue-button-list">
-                                            <li>
-                                                <a class="big-blue-button" href="admin.jsp?show=categories&page=${requestScope.maxPage}&does=put" >Create Category</a>
-                                            </li>
-                                            <li>
-                                                <a class="big-blue-button" href="admin.jsp?show=categories&does=put" >Create Category</a>
-                                            </li>
-                                        </ul>
-                                    </div>
                                 </c:when>
                                 <c:when test="${param.show eq 'categories'}">
                                     <!-- Declare required variables -->
@@ -247,14 +243,6 @@
                                             </c:forEach>
                                         </ul>
                                     </div>
-                                    <div class="content__main__panel--right">
-                                        <ul class="big-blue-button-list">
-                                            <li>
-                                                <a class="big-blue-button" href="admin.jsp?show=categories&page=${(requestScope.catCount + 1) % pageScope.num eq 1 ? requestScope.maxPage : requestScope.maxPage}&does=new" >Create Category</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-
                                 </c:when>
                                 <c:when test="${param.show eq 'users'}">
                                     <!-- Declare required variables -->
@@ -267,12 +255,50 @@
                                     <p class="content-text--admin">Where ya going dude?</p>
                                 </c:otherwise>
                             </c:choose>
-
+                            <div class="content__main__panel--right">
+                                <ul class="big-blue-button-list">
+                                    <c:choose>
+                                        <c:when test="${param.show eq 'articles'}">
+                                            <c:choose>
+                                                <c:when test="${not empty param.does and param.does eq 'new'}">
+                                                    <li>
+                                                        <button class="big-blue-button" form="article-form">Save New Article</button>
+                                                    </li>
+                                                </c:when>
+                                                <c:when test="${not empty param.does and param.does eq 'edit'}">
+                                                    <li>
+                                                        <button class="big-blue-button" form="article-form">Save Edit</button>
+                                                    </li>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <li>
+                                                        <a class="big-blue-button" href="admin.jsp?show=articles&does=new" >Create Article</a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="big-blue-button" href="admin.jsp?show=articles" >Show All Articles</a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="big-blue-button" href="admin.jsp?show=articles&hidden=false" >Show Visible Articles Only</a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="big-blue-button" href="admin.jsp?show=articles&hidden=true" >Show Hidden Articles Only</a>
+                                                    </li>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:when>
+                                        <c:when test="${param.show eq 'categories'}">
+                                            <li>
+                                                <a class="big-blue-button" href="admin.jsp?show=categories&page=${(requestScope.catCount + 1) % pageScope.num eq 1 ? requestScope.maxPage : requestScope.maxPage}&does=new" >Create Category</a>
+                                            </li>
+                                        </c:when>
+                                    </c:choose>
+                                </ul>
+                            </div>
                         </c:otherwise>
                     </c:choose>
                 </div>
                 <div class="content__footer">
-                    <c:if test="${not empty param.show and empty param.id}">
+                    <c:if test="${not empty param.show and empty param.artId}">
                         <c:set var="showParam" scope="page" value="&show=${param.show}"/>
                         <c:if test="${not empty param.hidden}">
                             <c:set var="hiddenParam" scope="page" value="&hidden=${param.hidden}"/>

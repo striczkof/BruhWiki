@@ -40,13 +40,16 @@ public class DatabaseAccess {
 
     public void close() {
         try {
+            if (psArray != null) {
+                if (!psArray.isEmpty()) {
+                    for (PreparedStatement ps : psArray.values()) {
+                        ps.close();
+                    }
+                }
+                psArray.clear();
+            }
             if (connection != null) {
                 connection.close();
-            }
-            if (psArray != null && !psArray.isEmpty()) {
-                for (PreparedStatement ps : psArray.values()) {
-                    ps.close();
-                }
             }
         } catch (SQLException e) {
             log.severe("The servlet " + servletName + "'s DAO has had a bruh moment.");

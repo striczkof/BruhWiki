@@ -708,7 +708,7 @@ public class AdminServlet extends HttpServlet {
         try {
             PreparedStatement ps;
             // Choosing what to change, must have hidden
-            if (catId != 1) {
+            if (catId != -1) {
                 // Changing category and hidden
                 if (title != null) {
                     // Changing category, title, and hidden
@@ -960,6 +960,7 @@ public class AdminServlet extends HttpServlet {
      * 2 = option not found
      * 3 = parsing error
      * 4 = deletion failed
+     * 5 = update failed
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Before doing funny stuff, check if user is logged in and admin first, if not, yeet the guy into the index!
@@ -982,17 +983,39 @@ public class AdminServlet extends HttpServlet {
                     case "articles":
                         // Check if id is specified
                         if (request.getParameter("id") != null) {
+                            int id = Integer.parseInt(request.getParameter("id"));
+                            Article article = Objects.requireNonNull(getArticle(id, 0));
                             // Get article by id
                             switch (Objects.requireNonNullElse(request.getParameter("does"), "woah")) {
                                 case "del":
+                                    // Delete article
                                     break;
                                 case "hide":
+                                    // Hide article
+                                    article = updateArticle(article, -1, null, null, true);
+                                    if (Objects.isNull(article) || !article.getHidden()) {
+                                        // Update failed
+                                        request.setAttribute("result", 5);
+                                    } else {
+                                        // Update successful
+                                        request.setAttribute("result", 0);
+                                    }
                                     break;
                                 case "unhide":
+                                    article = updateArticle(article, -1, null, null, false);
+                                    if (Objects.isNull(article) || article.getHidden()) {
+                                        // Update failed
+                                        request.setAttribute("result", 5);
+                                    } else {
+                                        // Update successful
+                                        request.setAttribute("result", 0);
+                                    }
                                     break;
                                 case "edit":
-                                    break;
-                                case "new":
+                                    // Send article to edit
+                                    request.setAttribute("article", article);
+                                    request.setAttribute("categories", getCategories());
+                                    request.setAttribute("result", 0);
                                     break;
                                 default:
                                     // Invalid option
@@ -1000,28 +1023,35 @@ public class AdminServlet extends HttpServlet {
                                     break;
                             }
                         } else {
-                            // No id specified, show all articles
-                            if (request.getParameter("hidden") != null) {
-                                boolean hidden = Boolean.parseBoolean(request.getParameter("hidden"));
-                                if (hidden) {
+                            if (request.getParameter("does") != null && request.getParameter("does").equals("new")) {
+                                // New article, just send the category and any other relevant info back.
+                                request.setAttribute("categories", getCategories());
+                                request.setAttribute("result", 0);
+
+                            } else {
+                                // No id specified, show all articles
+                                if (request.getParameter("hidden") != null) {
                                     int resultCount = countArticles(true, false);
                                     request.setAttribute("maxPage", Math.floorDiv(resultCount, num) + 1);
                                     request.setAttribute("articleCount", resultCount);
                                     request.setAttribute("hiddenArticleCount", countArticles(true, false));
-                                    request.setAttribute("articles", getArticles(truncate, num, (page * num) - (num - 1), true, false));
+                                    if (Boolean.parseBoolean(request.getParameter("hidden"))) {
+                                        request.setAttribute("articles", getArticles(truncate, num, (page * num) - (num - 1), true, false));
+                                    } else {
+                                        request.setAttribute("articles", getArticles(truncate, num, (page * num) - (num - 1), false, false));
+                                    }
                                     request.setAttribute("result", 0);
                                 } else {
-
+                                    // Return all articles
+                                    int resultCount = countArticles(true);
+                                    request.setAttribute("maxPage", Math.floorDiv(resultCount, num) + 1);
+                                    request.setAttribute("articleCount", resultCount);
+                                    request.setAttribute("hiddenArticleCount", countArticles(true, false));
+                                    request.setAttribute("articles", getArticles(truncate, num, (page * num) - (num - 1), true));
+                                    request.setAttribute("result", 0);
                                 }
-                            } else {
-                                int resultCount = countArticles(true);
-                                request.setAttribute("maxPage", Math.floorDiv(resultCount, num) + 1);
-                                request.setAttribute("articleCount", resultCount);
-                                request.setAttribute("hiddenArticleCount", countArticles(true, false));
-                                request.setAttribute("articles", getArticles(truncate, num, (page * num) - (num - 1), true));
-                                request.setAttribute("result", 0);
+                                return;
                             }
-                            return;
                         }
                     case "categories":
                         if (request.getParameter("id") != null) {

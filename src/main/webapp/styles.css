@@ -28,6 +28,10 @@ div.content {
     padding-right: 20px;
 }
 
+form.article-form {
+    display: block;
+}
+
 /* Sidebar for the main container */
 /* Sidebar container. This should take 19% of the width of the main container, and be floated to the left */
 div.sidebar {
@@ -103,7 +107,7 @@ ul.big-blue-button-list li {
     padding: 0;
 }
 
-a.big-blue-button {
+.big-blue-button {
     display: inline-block;
     margin: 4px 0;
     padding: 8px 16px;
